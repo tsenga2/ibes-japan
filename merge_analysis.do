@@ -2,7 +2,10 @@ cls
 clear all
 
 
-use  "/Users/kawabatahatsu/Desktop/ra/IBES/international/merged.dta", clear
+*global data_path "/Users/kawabatahatsu/Desktop/ra/IBES/international"
+global data_path "/Users/tsenga/ibes-japan/ibes-japan"
+use $data_path/merged.dta, clear
+
 
 keep if _merge == 3
 
@@ -43,7 +46,7 @@ foreach l of local levels {
 }
 
 
-save num_firms.dta, replace
+save "$mypath/num_firms.dta", replace
 
 restore
 
@@ -81,7 +84,7 @@ foreach l of local levels {
 }
 
 
-save sum_year.dta, replace
+save "$mypath/sum_year.dta", replace
 
 restore
 
@@ -114,21 +117,21 @@ foreach l of local levels {
 }
 
 
-save sum_renketsu.dta, replace
+save "$mypath/sum_renketsu.dta", replace
 
 
-merge 1:1 eyear using "/Users/kawabatahatsu/Desktop/ra/IBES/international/num_firms.dta"
+merge 1:1 eyear using "$mypath/num_firms.dta"
 
 save sum, replace
 drop _merge 
 
-merge 1:1 eyear using "/Users/kawabatahatsu/Desktop/ra/IBES/international/sum_year.dta"
+merge 1:1 eyear using "$mypath/sum_year.dta"
 
 save sum, replace
 drop _merge
 order eyear, first
 
-outsheet using "sum.tex", replace
+outsheet using "$mypath/sum.tex", replace
 
 
 twoway (line num_firms eyear, sort), legend(label(1 "num_firms")) name(num_firms, replace)

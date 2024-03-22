@@ -1,7 +1,8 @@
 cls
 clear all
 set more off
-set graphics on
+
+
 
 import delimited  "/Users/kawabatahatsu/Desktop/ra/renketsu.csv", clear
 
@@ -21,6 +22,11 @@ save renketsu1, replace
 use "/Users/kawabatahatsu/Desktop/ra/IBES/international/ibes-summary-international.dta", clear
 
 keep if CURCODE == "JPY"
+
+gen syear=year(STATPERS)
+gen sm=month(STATPERS)
+gen sym = ym(syear, sm)
+format sym %tm
 
 gen eyear=year(FPEDATS)
 gen em=month(FPEDATS)

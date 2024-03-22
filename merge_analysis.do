@@ -1,6 +1,6 @@
 cls
 clear all
-
+set graph off
 
 *global data_path "/Users/kawabatahatsu/Desktop/ra/IBES/international"
 global data_path "/Users/tsenga/ibes-japan/ibes-japan"
@@ -105,6 +105,8 @@ foreach l of local levels{
 	restore 
 }
 
+preserve
+
 local first = 1
 foreach l of local levels {
     if `first' {
@@ -131,7 +133,7 @@ save sum, replace
 drop _merge
 order eyear, first
 
-outsheet using "$mypath/sum.tex", replace
+outsheet using "$mypath/sum_year.tex", replace
 
 
 twoway (line num_firms eyear, sort), legend(label(1 "num_firms")) name(num_firms, replace)
@@ -142,4 +144,153 @@ twoway (line mean_Fdis_CV eyear, sort), legend(label(1 "mean_Fdis_CV")) name(mea
 twoway (line mean_FE_log eyear, sort), legend(label(1 "mean_FE_log")) name(mean_FE_log, replace)
 twoway (line mean_FE_pct eyear, sort), legend(label(1 "mean_FE_pct")) name(mean_FE_pct, replace)
 
+set graph on
 graph combine num_firms mean_sale mean_ta mean_NUMEST mean_Fdis_CV mean_FE_log mean_FE_pct, title("") graphregion(color(white)) name(combo, replace)
+set graph off
+graph export "$mypath/combo.png", replace
+
+
+
+restore
+
+$horizon
+
+levelsof horizon, local(levels)
+foreach l of local levels{
+	preserve
+	keep if horizon == `l'
+	duplicates drop TICKER, force
+	egen num_firms = count(TICKER)
+	keep horizon num_firms
+	duplicates drop num_firms, force
+	tempfile `l'
+	save `l',replace
+	restore
+}
+
+preserve
+
+
+local first = 1
+foreach l of local levels {
+    if `first' {
+        use `l', clear
+        local first = 0
+    }
+    else {
+        append using `l'
+    }
+}
+
+
+save "$mypath/num_firms.dta", replace
+
+restore
+
+
+levelsof horizon, local(levels)
+foreach l of local levels{
+	preserve
+	keep if horizon == `l'
+	keep NUMEST Fdis_CV FE_log FE_pct
+	winsor2 *, replace cuts(1 99) trim
+	egen mean_NUMEST = mean(NUMEST)
+	egen mean_Fdis_CV = mean(Fdis_CV)
+	egen mean_FE_log = mean(FE_log)
+	egen mean_FE_pct = mean(FE_pct)
+	gen horizon = `l'
+	drop NUMEST Fdis_CV FE_log FE_pct
+	duplicates drop mean_NUMEST, force
+	tempfile `l'
+	save `l',replace
+	
+	restore 
+}
+
+preserve
+
+local first = 1
+foreach l of local levels {
+    if `first' {
+        use `l', clear
+        local first = 0
+    }
+    else {
+        append using `l'
+    }
+}
+
+
+save "$mypath/sum_year.dta", replace
+
+restore
+
+levelsof horizon, local(levels)
+foreach l of local levels{
+	preserve
+	keep if horizon == `l'
+	keep sale ta
+	duplicates drop	*, force
+	winsor2 *, replace cuts(1 99) trim
+	egen mean_sale = mean(sale)
+	egen mean_ta = mean(ta)
+	gen horizon = `l'
+	drop sale ta
+	duplicates drop mean_sale, force
+	tempfile `l'
+	save `l',replace	
+	restore 
+}
+
+preserve
+
+local first = 1
+foreach l of local levels {
+    if `first' {
+        use `l', clear
+        local first = 0
+    }
+    else {
+        append using `l'
+    }
+}
+
+
+save "$mypath/sum_renketsu.dta", replace
+
+twoway (line num_firms horizon, sort), legend(label(1 "num_firms")) name(num_firms, replace)
+twoway (line mean_sale horizon, sort), legend(label(1 "mean_sale")) name(mean_sale, replace)
+twoway (line mean_ta horizon, sort), legend(label(1 "mean_ta")) name(mean_ta, replace)
+twoway (line mean_NUMEST horizon, sort), legend(label(1 "mean_NUMEST")) name(mean_NUMEST, replace)
+twoway (line mean_Fdis_CV horizon, sort), legend(label(1 "mean_Fdis_CV")) name(mean_Fdis_CV, replace)
+twoway (line mean_FE_log horizon, sort), legend(label(1 "mean_FE_log")) name(mean_FE_log, replace)
+twoway (line mean_FE_pct horizon, sort), legend(label(1 "mean_FE_pct")) name(mean_FE_pct, replace)
+
+set graph on
+graph combine num_firms mean_sale mean_ta mean_NUMEST mean_Fdis_CV mean_FE_log mean_FE_pct, title("") graphregion(color(white)) name(combo1, replace)
+set graph off
+graph export "$mypath/combo1.png", replace
+
+outsheet using "$mypath/sum_horizon.tex", replace
+
+restore
+
+replace STDEV = STDEV/ACTUAL
+
+binscatter STDEV NUMEST, name(stnm, replace)
+binscatter STDEV horizon, name(stho, replace)
+binscatter NUMEST horizon, name(nmho, replace)
+binscatter ACTUAL NUMEST, name(acnm, replace)
+binscatter ACTUAL STDEV, name(acst, replace)
+binscatter ACTUAL horizon, name(acho, replace)
+
+set graph on
+graph combine stnm stho nmho acnm acst acho, title("") graphregion(color(white)) name(combo2, replace)
+set graph off
+graph export "$mypath/combo2.png", replace
+
+
+
+foreach l of local levels {
+	erase "`l'.dta"
+}

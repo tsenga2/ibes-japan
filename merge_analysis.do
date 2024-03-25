@@ -146,14 +146,21 @@ twoway (line mean_FE_pct eyear, sort), legend(label(1 "mean_FE_pct")) name(mean_
 
 set graph on
 graph combine num_firms mean_sale mean_ta mean_NUMEST mean_Fdis_CV mean_FE_log mean_FE_pct, title("") graphregion(color(white)) name(combo, replace)
-set graph off
 graph export "$mypath/combo.png", replace
+set graph off
+
+
+foreach l of local levels {
+	erase "`l'.dta"
+}
 
 
 
 restore
 
 $horizon
+
+keep if horizon >= 0
 
 levelsof horizon, local(levels)
 foreach l of local levels{
@@ -221,7 +228,7 @@ foreach l of local levels {
 }
 
 
-save "$mypath/sum_year.dta", replace
+save "$mypath/sum_horizon.dta", replace
 
 restore
 
@@ -255,6 +262,22 @@ foreach l of local levels {
     }
 }
 
+save "$mypath/sum_renketsu.dta", replace
+
+
+merge 1:1 horizon using "$mypath/num_firms.dta"
+
+save sum, replace
+drop _merge 
+
+merge 1:1 horizon using "$mypath/sum_horizon.dta"
+
+save sum, replace
+drop _merge
+order horizon, first
+
+outsheet using "$mypath/sum_horizon.tex", replace
+
 
 save "$mypath/sum_renketsu.dta", replace
 
@@ -268,8 +291,8 @@ twoway (line mean_FE_pct horizon, sort), legend(label(1 "mean_FE_pct")) name(mea
 
 set graph on
 graph combine num_firms mean_sale mean_ta mean_NUMEST mean_Fdis_CV mean_FE_log mean_FE_pct, title("") graphregion(color(white)) name(combo1, replace)
-set graph off
 graph export "$mypath/combo1.png", replace
+set graph off
 
 outsheet using "$mypath/sum_horizon.tex", replace
 
@@ -286,9 +309,8 @@ binscatter ACTUAL horizon, name(acho, replace)
 
 set graph on
 graph combine stnm stho nmho acnm acst acho, title("") graphregion(color(white)) name(combo2, replace)
-set graph off
 graph export "$mypath/combo2.png", replace
-
+set graph off
 
 
 foreach l of local levels {

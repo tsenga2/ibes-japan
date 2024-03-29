@@ -2,9 +2,12 @@ cls
 clear all
 set graph off
 
-*global mypath "/Users/kawabatahatsu/Desktop/ra/IBES/international"
-global mypath "/Users/tsenga/ibes-japan/ibes-japan"
+global mypath "/Users/kawabatahatsu/Desktop/ra/IBES/international"
+*global mypath "/Users/tsenga/ibes-japan/ibes-japan"
 use $mypath/merged.dta, clear
+
+capture mkdir $mypath/graph 
+
 
 
 keep if _merge == 3
@@ -153,19 +156,29 @@ order eyear, first
 
 outsheet using "$mypath/sum_year.tex", replace
 
-twoway (line num_firms eyear,lwidth(thick) sort), xtitle("") ytitle("Number of Firms") xlabel(1985(6)2021) legend(label(1 "Number of firms")) name(num_firms, replace)
-twoway (line mean_sale eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of sales") xlabel(1985(6)2021)  legend(label(1 "mean of sales")) name(mean_sale, replace)
-twoway (line mean_ta eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of total assets") xlabel(1985(6)2021)  legend(label(1 "mean of total assets")) name(mean_ta, replace)
-twoway (line mean_sale_log eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of sales (log)") xlabel(1985(6)2021)  legend(label(1 "mean_sale log")) name(mean_sale_log, replace)
-twoway (line mean_ta_log eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of assets (log)") xlabel(1985(6)2021)  legend(label(1 "mean_ta log")) name(mean_ta_log, replace)
-twoway (line mean_NUMEST eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of number of estimator") xlabel(1985(6)2021)  legend(label(1 "mean of Number of estimator")) name(mean_NUMEST, replace)
-twoway (line mean_Fdis_CV eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of Fdis CV") xlabel(1985(6)2021)  legend(label(1 "mean_Fdis_CV")) name(mean_Fdis_CV, replace)
-twoway (line mean_FE_log eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of FE log") xlabel(1985(6)2021)  legend(label(1 "mean_FE_log")) name(mean_FE_log, replace)
-twoway (line mean_FE_pct eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of FE pct") xlabel(1985(6)2021)  legend(label(1 "mean_FE_pct")) name(mean_FE_pct, replace)
-
 set graph on
+
+twoway (line num_firms eyear,lwidth(thick) sort), xtitle("") ytitle("Number of Firms") xlabel(1985(6)2021) legend(label(1 "Number of firms")) name(num_firms, replace)
+graph export "$mypath/graph/numfirm_y.png", replace
+twoway (line mean_sale eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of sales") xlabel(1985(6)2021)  legend(label(1 "mean of sales")) name(mean_sale, replace)
+graph export "$mypath/graph/meansale_y.png", replace
+twoway (line mean_ta eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of total assets") xlabel(1985(6)2021)  legend(label(1 "mean of total assets")) name(mean_ta, replace)
+graph export "$mypath/graph/meanta_y.png", replace
+twoway (line mean_sale_log eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of sales (log)") xlabel(1985(6)2021)  legend(label(1 "mean_sale log")) name(mean_sale_log, replace)
+graph export "$mypath/graph/meansale_log_y.png", replace
+twoway (line mean_ta_log eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of assets (log)") xlabel(1985(6)2021)  legend(label(1 "mean_ta log")) name(mean_ta_log, replace)
+graph export "$mypath/graph/meanta_log_y.png", replace
+twoway (line mean_NUMEST eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of number of estimator") xlabel(1985(6)2021)  legend(label(1 "mean of Number of estimator")) name(mean_NUMEST, replace)
+graph export "$mypath/graph/meannamest_y.png", replace
+twoway (line mean_Fdis_CV eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of Fdis CV") xlabel(1985(6)2021)  legend(label(1 "mean_Fdis_CV")) name(mean_Fdis_CV, replace)
+graph export "$mypath/graph/meanfdiscv_y.png", replace
+twoway (line mean_FE_log eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of FE log") xlabel(1985(6)2021)  legend(label(1 "mean_FE_log")) name(mean_FE_log, replace)
+graph export "$mypath/graph/meanfelog_y.png", replace
+twoway (line mean_FE_pct eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of FE pct") xlabel(1985(6)2021)  legend(label(1 "mean_FE_pct")) name(mean_FE_pct, replace)
+graph export "$mypath/graph/meanfepct_y.png", replace
+
 graph combine num_firms mean_sale mean_ta mean_sale_log mean_ta_log mean_NUMEST mean_Fdis_CV mean_FE_log mean_FE_pct, title("") graphregion(color(white)) name(combo, replace)
-graph export "$mypath/combo.png", replace
+graph export "$mypath/graph/combo_y.png", replace
 set graph off
 
 
@@ -301,19 +314,30 @@ outsheet using "$mypath/sum_horizon.tex", replace
 
 save "$mypath/sum_renketsu.dta", replace
 
-twoway (line num_firms horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Number of firms") legend(label(1 "num_firms")) name(num_firms, replace)
-twoway (line mean_sale horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of sales") legend(label(1 "mean_sale")) name(mean_sale, replace)
-twoway (line mean_ta horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of total assets") legend(label(1 "mean_ta")) name(mean_ta, replace)
-twoway (line mean_sale_log horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of sales (log)") legend(label(1 "mean_sale")) name(mean_sale_log, replace)
-twoway (line mean_ta_log horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of total assets (log)") legend(label(1 "mean_ta")) name(mean_ta_log, replace)
-twoway (line mean_NUMEST horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of number of estimator") legend(label(1 "mean_NUMEST")) name(mean_NUMEST, replace)
-twoway (line mean_Fdis_CV horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of Fdis CV") legend(label(1 "mean_Fdis_CV")) name(mean_Fdis_CV, replace)
-twoway (line mean_FE_log horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of FE log") legend(label(1 "mean_FE_log")) name(mean_FE_log, replace)
-twoway (line mean_FE_pct horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of FE pct") legend(label(1 "mean_FE_pct")) name(mean_FE_pct, replace)
-
 set graph on
+
+twoway (line num_firms horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Number of firms") legend(label(1 "num_firms")) name(num_firms, replace)
+graph export "$mypath/graph/numfirm_h.png", replace
+twoway (line mean_sale horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of sales") legend(label(1 "mean_sale")) name(mean_sale, replace)
+graph export "$mypath/graph/meansale_h.png", replace
+twoway (line mean_ta horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of total assets") legend(label(1 "mean_ta")) name(mean_ta, replace)
+graph export "$mypath/graph/meanta_h.png", replace
+twoway (line mean_sale_log horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of sales (log)") legend(label(1 "mean_sale")) name(mean_sale_log, replace)
+graph export "$mypath/graph/meansalelog_h.png", replace
+twoway (line mean_ta_log horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of total assets (log)") legend(label(1 "mean_ta")) name(mean_ta_log, replace)
+graph export "$mypath/graph/meantalog_h.png", replace
+twoway (line mean_NUMEST horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of number of estimator") legend(label(1 "mean_NUMEST")) name(mean_NUMEST, replace)
+graph export "$mypath/graph/meannumest_h.png", replace
+twoway (line mean_Fdis_CV horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of Fdis CV") legend(label(1 "mean_Fdis_CV")) name(mean_Fdis_CV, replace)
+graph export "$mypath/graph/meanfdis_h.png", replace
+twoway (line mean_FE_log horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of FE log") legend(label(1 "mean_FE_log")) name(mean_FE_log, replace)
+graph export "$mypath/graph/meanFElog_h.png", replace
+twoway (line mean_FE_pct horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of FE pct") legend(label(1 "mean_FE_pct")) name(mean_FE_pct, replace)
+graph export "$mypath/graph/meanFEpct_h.png", replace
+
+
 graph combine num_firms mean_sale mean_ta mean_sale_log mean_ta_log mean_NUMEST mean_Fdis_CV mean_FE_log mean_FE_pct, title("") graphregion(color(white)) name(combo1, replace)
-graph export "$mypath/combo1.png", replace
+graph export "$mypath/graph/combo_h.png", replace
 set graph off
 
 outsheet using "$mypath/sum_horizon.tex", replace
@@ -324,25 +348,41 @@ restore
 describe
 winsor2 Fdis_CV NUMEST ACTUAL STDEV SD_ACTUAL_growth, replace cuts(1 99) trim
 
-binscatter Fdis_CV NUMEST, ytitle("Fdis CV") xtitle("Number of estimator") name(stnm, replace)
-binscatter Fdis_CV horizon, ytitle("Fdis CV") name(stho, replace)
-binscatter NUMEST horizon, ytitle("Number of estimator")  name(nmho, replace)
-binscatter ACTUAL NUMEST, ytitle("Actual") xtitle("Number of estimator") name(acnm, replace)
-binscatter ACTUAL Fdis_CV, ytitle("Actual") xtitle("Fdis CV") name(acst, replace)
-binscatter ACTUAL horizon, ytitle("Actual") name(acho, replace)
-binscatter ACTUAL MEDEST, ytitle("Actual") xtitle("Medisan of estimation") name(aaa, replace)
-binscatter STDEV NUMEST, ytitle("Standard deviation") xtitle("Number of estimator") name(bbb, replace)
-binscatter FE_log NUMEST, ytitle("FE log") xtitle("Number of estimator") name(ccc, replace)
-binscatter FE_pct NUMEST, ytitle("FE pct") xtitle("Number of estimator") name(ddd, replace)
-binscatter FE_log horizon, ytitle("FE log") name(eee, replace)
-binscatter FE_pct horizon, ytitle("FE pct") name(fff, replace)
-binscatter SD_ACTUAL_growth NUMEST, ytitle("Volatility of EPS growth") name(ggg, replace)
-binscatter SD_ACTUAL_growth Fdis_CV, ytitle("Volatility of EPS growth") name(hhh, replace)
-binscatter SD_ACTUAL_growth ACTUAL, ytitle("Volatility of EPS growth") name(iii, replace)
-
 set graph on
+
+binscatter Fdis_CV NUMEST, ytitle("Fdis CV") xtitle("Number of estimator") name(stnm, replace)
+graph export "$mypath/graph/FdisCVnumest.png", replace
+binscatter Fdis_CV horizon, ytitle("Fdis CV") name(stho, replace)
+graph export "$mypath/graph/FdisCVhorizon.png", replace
+binscatter NUMEST horizon, ytitle("Number of estimator")  name(nmho, replace)
+graph export "$mypath/graph/Numesthorizon.png", replace
+binscatter ACTUAL NUMEST, ytitle("Actual") xtitle("Number of estimator") name(acnm, replace)
+graph export "$mypath/graph/ActualNmest.png", replace
+binscatter ACTUAL Fdis_CV, ytitle("Actual") xtitle("Fdis CV") name(acst, replace)
+graph export "$mypath/graph/ActualFdisCV.png", replace
+binscatter ACTUAL horizon, ytitle("Actual") name(acho, replace)
+graph export "$mypath/graph/Actualhorizon.png", replace
+binscatter ACTUAL MEDEST, ytitle("Actual") xtitle("Medisan of estimation") name(aaa, replace)
+graph export "$mypath/graph/ActuslMedest.png", replace
+binscatter STDEV NUMEST, ytitle("Standard deviation") xtitle("Number of estimator") name(bbb, replace)
+graph export "$mypath/graph/StdevNumest.png", replace
+binscatter FE_log NUMEST, ytitle("FE log") xtitle("Number of estimator") name(ccc, replace)
+graph export "$mypath/graph/FElogNumest.png", replace
+binscatter FE_pct NUMEST, ytitle("FE pct") xtitle("Number of estimator") name(ddd, replace)
+graph export "$mypath/graph/FepctNumest.png", replace
+binscatter FE_log horizon, ytitle("FE log") name(eee, replace)
+graph export "$mypath/graph/FElogHorizon.png", replace
+binscatter FE_pct horizon, ytitle("FE pct") name(fff, replace)
+graph export "$mypath/graph/FepctHorizon.png", replace
+binscatter SD_ACTUAL_growth NUMEST, ytitle("Volatility of EPS growth") name(ggg, replace)
+graph export "$mypath/graph/SdactualgrowthNumest.png", replace
+binscatter SD_ACTUAL_growth Fdis_CV, ytitle("Volatility of EPS growth") name(hhh, replace)
+graph export "$mypath/graph/SdactualgrowthFdisCV.png", replace
+binscatter SD_ACTUAL_growth ACTUAL, ytitle("Volatility of EPS growth") name(iii, replace)
+graph export "$mypath/graph/SdactualgrowthActual.png", replace
+
 graph combine stnm bbb stho nmho acnm acst acho aaa ccc ddd eee fff hhh iii, title("") graphregion(color(white)) name(combo2, replace)
-graph export "$mypath/combo2.png", replace
+graph export "$mypath/graph/combo_binscatter.png", replace
 set graph off
 
 

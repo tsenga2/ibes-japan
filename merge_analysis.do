@@ -2,8 +2,8 @@ cls
 clear all
 set graph off
 
-*global mypath "/Users/kawabatahatsu/Desktop/ra/IBES/international"
-global mypath "/Users/tsenga/ibes-japan/ibes-japan"
+global mypath "/Users/kawabatahatsu/Desktop/ra/IBES/international"
+*global mypath "/Users/tsenga/ibes-japan/ibes-japan"
 use $mypath/merged.dta, clear
 
 

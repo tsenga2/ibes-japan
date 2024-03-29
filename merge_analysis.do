@@ -322,7 +322,7 @@ restore
 
 
 describe
-winsor2 Fdis_CV NUMEST ACTUAL STDEV, replace cuts(1 99) trim
+winsor2 Fdis_CV NUMEST ACTUAL STDEV SD_ACTUAL_growth, replace cuts(1 99) trim
 
 binscatter Fdis_CV NUMEST, ytitle("Fdis CV") xtitle("Number of estimator") name(stnm, replace)
 binscatter Fdis_CV horizon, ytitle("Fdis CV") name(stho, replace)
@@ -336,9 +336,12 @@ binscatter FE_log NUMEST, ytitle("FE log") xtitle("Number of estimator") name(cc
 binscatter FE_pct NUMEST, ytitle("FE pct") xtitle("Number of estimator") name(ddd, replace)
 binscatter FE_log horizon, ytitle("FE log") name(eee, replace)
 binscatter FE_pct horizon, ytitle("FE pct") name(fff, replace)
+binscatter SD_ACTUAL_growth NUMEST, ytitle("Volatility of EPS growth") name(ggg, replace)
+binscatter SD_ACTUAL_growth Fdis_CV, ytitle("Volatility of EPS growth") name(hhh, replace)
+binscatter SD_ACTUAL_growth ACTUAL, ytitle("Volatility of EPS growth") name(iii, replace)
 
 set graph on
-graph combine stnm bbb stho nmho acnm acst acho aaa ccc ddd eee fff, title("") graphregion(color(white)) name(combo2, replace)
+graph combine stnm bbb stho nmho acnm acst acho aaa ccc ddd eee fff hhh iii, title("") graphregion(color(white)) name(combo2, replace)
 graph export "$mypath/combo2.png", replace
 set graph off
 

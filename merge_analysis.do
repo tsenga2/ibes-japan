@@ -2,13 +2,8 @@ cls
 clear all
 set graph off
 
-<<<<<<< HEAD
-global mypath "/Users/kawabatahatsu/Desktop/ra/IBES/international"
-*global mypath "/Users/tsenga/ibes-japan/ibes-japan"
-=======
 *global mypath "/Users/kawabatahatsu/Desktop/ra/IBES/international"
 global mypath "/Users/tsenga/ibes-japan/ibes-japan"
->>>>>>> b89909b75dba835403026333199313eedc628818
 use $mypath/merged.dta, clear
 
 
@@ -329,7 +324,6 @@ restore
 describe
 winsor2 Fdis_CV NUMEST ACTUAL STDEV, replace cuts(1 99) trim
 
-<<<<<<< HEAD
 binscatter Fdis_CV NUMEST, ytitle("Fdis CV") xtitle("Number of estimator") name(stnm, replace)
 binscatter Fdis_CV horizon, ytitle("Fdis CV") name(stho, replace)
 binscatter NUMEST horizon, ytitle("Number of estimator")  name(nmho, replace)
@@ -342,20 +336,6 @@ binscatter FE_log NUMEST, ytitle("FE log") xtitle("Number of estimator") name(cc
 binscatter FE_pct NUMEST, ytitle("FE pct") xtitle("Number of estimator") name(ddd, replace)
 binscatter FE_log horizon, ytitle("FE log") name(eee, replace)
 binscatter FE_pct horizon, ytitle("FE pct") name(fff, replace)
-=======
-binscatter Fdis_CV NUMEST, name(stnm, replace)
-binscatter Fdis_CV horizon, name(stho, replace)
-binscatter NUMEST horizon, name(nmho, replace)
-binscatter ACTUAL NUMEST, name(acnm, replace)
-binscatter ACTUAL Fdis_CV, name(acst, replace)
-binscatter ACTUAL horizon, name(acho, replace)
-binscatter ACTUAL MEDEST, name(aaa, replace)
-binscatter STDEV NUMEST, name(bbb, replace)
-binscatter FE_log NUMEST, name(ccc, replace)
-binscatter FE_pct NUMEST, name(ddd, replace)
-binscatter FE_log horizon, name(eee, replace)
-binscatter FE_pct horizon, name(fff, replace)
->>>>>>> b89909b75dba835403026333199313eedc628818
 
 set graph on
 graph combine stnm bbb stho nmho acnm acst acho aaa ccc ddd eee fff, title("") graphregion(color(white)) name(combo2, replace)

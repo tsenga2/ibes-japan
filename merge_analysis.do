@@ -153,15 +153,15 @@ order eyear, first
 
 outsheet using "$mypath/sum_year.tex", replace
 
-twoway (line num_firms eyear,lwidth(thick) sort), xtitle("") ytitle("Number of Firms") xlabel(1985(10)2023) legend(label(1 "Number of firms")) name(num_firms, replace)
-twoway (line mean_sale eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of sales") xscale(r(1985 2024)) legend(label(1 "mean of sales")) name(mean_sale, replace)
-twoway (line mean_ta eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of total assets") xscale(r(1985 2024)) legend(label(1 "mean of total assets")) name(mean_ta, replace)
-twoway (line mean_sale_log eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of sales (log)") xscale(r(1985 2024)) legend(label(1 "mean_sale log")) name(mean_sale_log, replace)
-twoway (line mean_ta_log eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of assets (log)") xscale(r(1985 2024)) legend(label(1 "mean_ta log")) name(mean_ta_log, replace)
-twoway (line mean_NUMEST eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of number of estimator") xscale(r(1985 2024)) legend(label(1 "mean of Number of estimator")) name(mean_NUMEST, replace)
-twoway (line mean_Fdis_CV eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of Fdis CV") xscale(r(1985 2024)) legend(label(1 "mean_Fdis_CV")) name(mean_Fdis_CV, replace)
-twoway (line mean_FE_log eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of FE log") xscale(r(1985 2024)) legend(label(1 "mean_FE_log")) name(mean_FE_log, replace)
-twoway (line mean_FE_pct eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of FE pct") xscale(r(1985 2024)) legend(label(1 "mean_FE_pct")) name(mean_FE_pct, replace)
+twoway (line num_firms eyear,lwidth(thick) sort), xtitle("") ytitle("Number of Firms") xlabel(1985(6)2021) legend(label(1 "Number of firms")) name(num_firms, replace)
+twoway (line mean_sale eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of sales") xlabel(1985(6)2021)  legend(label(1 "mean of sales")) name(mean_sale, replace)
+twoway (line mean_ta eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of total assets") xlabel(1985(6)2021)  legend(label(1 "mean of total assets")) name(mean_ta, replace)
+twoway (line mean_sale_log eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of sales (log)") xlabel(1985(6)2021)  legend(label(1 "mean_sale log")) name(mean_sale_log, replace)
+twoway (line mean_ta_log eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of assets (log)") xlabel(1985(6)2021)  legend(label(1 "mean_ta log")) name(mean_ta_log, replace)
+twoway (line mean_NUMEST eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of number of estimator") xlabel(1985(6)2021)  legend(label(1 "mean of Number of estimator")) name(mean_NUMEST, replace)
+twoway (line mean_Fdis_CV eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of Fdis CV") xlabel(1985(6)2021)  legend(label(1 "mean_Fdis_CV")) name(mean_Fdis_CV, replace)
+twoway (line mean_FE_log eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of FE log") xlabel(1985(6)2021)  legend(label(1 "mean_FE_log")) name(mean_FE_log, replace)
+twoway (line mean_FE_pct eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of FE pct") xlabel(1985(6)2021)  legend(label(1 "mean_FE_pct")) name(mean_FE_pct, replace)
 
 set graph on
 graph combine num_firms mean_sale mean_ta mean_sale_log mean_ta_log mean_NUMEST mean_Fdis_CV mean_FE_log mean_FE_pct, title("") graphregion(color(white)) name(combo, replace)
@@ -301,15 +301,15 @@ outsheet using "$mypath/sum_horizon.tex", replace
 
 save "$mypath/sum_renketsu.dta", replace
 
-twoway (line num_firms horizon,lwidth(thick) sort), ytitle("Number of firms") legend(label(1 "num_firms")) name(num_firms, replace)
-twoway (line mean_sale horizon,lwidth(thick) sort), ytitle("Mean of sales") legend(label(1 "mean_sale")) name(mean_sale, replace)
-twoway (line mean_ta horizon,lwidth(thick) sort), ytitle("Mean of total assets") legend(label(1 "mean_ta")) name(mean_ta, replace)
-twoway (line mean_sale_log horizon,lwidth(thick) sort), ytitle("Mean of sales (log)") legend(label(1 "mean_sale")) name(mean_sale_log, replace)
-twoway (line mean_ta_log horizon,lwidth(thick) sort), ytitle("Mean of total assets (log)") legend(label(1 "mean_ta")) name(mean_ta_log, replace)
-twoway (line mean_NUMEST horizon,lwidth(thick) sort), ytitle("Mean of number of estimator") legend(label(1 "mean_NUMEST")) name(mean_NUMEST, replace)
-twoway (line mean_Fdis_CV horizon,lwidth(thick) sort), ytitle("Mean of Fdis CV") legend(label(1 "mean_Fdis_CV")) name(mean_Fdis_CV, replace)
-twoway (line mean_FE_log horizon,lwidth(thick) sort), ytitle("Mean of FE log") legend(label(1 "mean_FE_log")) name(mean_FE_log, replace)
-twoway (line mean_FE_pct horizon,lwidth(thick) sort), ytitle("Mean of FE pct") legend(label(1 "mean_FE_pct")) name(mean_FE_pct, replace)
+twoway (line num_firms horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Number of firms") legend(label(1 "num_firms")) name(num_firms, replace)
+twoway (line mean_sale horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of sales") legend(label(1 "mean_sale")) name(mean_sale, replace)
+twoway (line mean_ta horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of total assets") legend(label(1 "mean_ta")) name(mean_ta, replace)
+twoway (line mean_sale_log horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of sales (log)") legend(label(1 "mean_sale")) name(mean_sale_log, replace)
+twoway (line mean_ta_log horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of total assets (log)") legend(label(1 "mean_ta")) name(mean_ta_log, replace)
+twoway (line mean_NUMEST horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of number of estimator") legend(label(1 "mean_NUMEST")) name(mean_NUMEST, replace)
+twoway (line mean_Fdis_CV horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of Fdis CV") legend(label(1 "mean_Fdis_CV")) name(mean_Fdis_CV, replace)
+twoway (line mean_FE_log horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of FE log") legend(label(1 "mean_FE_log")) name(mean_FE_log, replace)
+twoway (line mean_FE_pct horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of FE pct") legend(label(1 "mean_FE_pct")) name(mean_FE_pct, replace)
 
 set graph on
 graph combine num_firms mean_sale mean_ta mean_sale_log mean_ta_log mean_NUMEST mean_Fdis_CV mean_FE_log mean_FE_pct, title("") graphregion(color(white)) name(combo1, replace)

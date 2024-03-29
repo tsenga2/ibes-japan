@@ -2,9 +2,9 @@ cls
 clear all
 set graph off
 
-*global data_path "/Users/kawabatahatsu/Desktop/ra/IBES/international"
-global data_path "/Users/tsenga/ibes-japan/ibes-japan"
-use $data_path/merged.dta, clear
+*global mypath "/Users/kawabatahatsu/Desktop/ra/IBES/international"
+global mypath "/Users/tsenga/ibes-japan/ibes-japan"
+use $mypath/merged.dta, clear
 
 
 keep if _merge == 3
@@ -298,17 +298,25 @@ outsheet using "$mypath/sum_horizon.tex", replace
 
 restore
 
-replace STDEV = STDEV/ACTUAL
 
-binscatter STDEV NUMEST, name(stnm, replace)
-binscatter STDEV horizon, name(stho, replace)
+describe
+winsor2 Fdis_CV NUMEST ACTUAL STDEV, replace cuts(1 99) trim
+
+binscatter Fdis_CV NUMEST, name(stnm, replace)
+binscatter Fdis_CV horizon, name(stho, replace)
 binscatter NUMEST horizon, name(nmho, replace)
 binscatter ACTUAL NUMEST, name(acnm, replace)
-binscatter ACTUAL STDEV, name(acst, replace)
+binscatter ACTUAL Fdis_CV, name(acst, replace)
 binscatter ACTUAL horizon, name(acho, replace)
+binscatter ACTUAL MEDEST, name(aaa, replace)
+binscatter STDEV NUMEST, name(bbb, replace)
+binscatter FE_log NUMEST, name(ccc, replace)
+binscatter FE_pct NUMEST, name(ddd, replace)
+binscatter FE_log horizon, name(eee, replace)
+binscatter FE_pct horizon, name(fff, replace)
 
 set graph on
-graph combine stnm stho nmho acnm acst acho, title("") graphregion(color(white)) name(combo2, replace)
+graph combine stnm bbb stho nmho acnm acst acho aaa ccc ddd eee fff, title("") graphregion(color(white)) name(combo2, replace)
 graph export "$mypath/combo2.png", replace
 set graph off
 

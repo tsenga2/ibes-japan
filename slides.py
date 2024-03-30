@@ -1,4 +1,5 @@
 import os
+import pyperclip
 
 # Get a list of all PNG files in the Graph directory
 graph_dir = "/Users/kawabatahatsu/Desktop/ra/IBES/international/graph"
@@ -16,5 +17,4 @@ for png_file in png_files:
 
 latex_code += "\\end{document}"
 
-print(latex_code)
-
+pyperclip.copy(latex_code)

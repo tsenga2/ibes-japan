@@ -2,8 +2,8 @@ cls
 clear all
 set graph off
 
-*global mypath "/Users/kawabatahatsu/Desktop/ra/IBES/international"
-global mypath "/Users/tsenga/ibes-japan/ibes-japan"
+global mypath "/Users/kawabatahatsu/Desktop/ra/IBES/international"
+*global mypath "/Users/tsenga/ibes-japan/ibes-japan"
 use $mypath/merged.dta, clear
 
 capture mkdir $mypath/graph 
@@ -296,7 +296,92 @@ foreach l of local levels {
 
 restore
 
+$month
+
+
+levelsof sym, local(levels)
+foreach l of local levels{
+	preserve
+	keep if sym == `l'
+	keep Fdis_CV FE_log FE_pct
+	winsor2 *, replace cuts(1 99) trim
+	egen mean_Fdis_CV = mean(Fdis_CV)
+	egen mean_FE_log = mean(FE_log)
+	egen mean_FE_pct = mean(FE_pct)
+	gen sym = `l'
+	drop Fdis_CV FE_log FE_pct
+	duplicates drop mean_Fdis_CV, force
+	tempfile `l'
+	save `l',replace
+	
+	restore 
+}
+
+preserve
+
+local first = 1
+foreach l of local levels {
+    if `first' {
+        use `l', clear
+        local first = 0
+    }
+    else {
+        append using `l'
+    }
+}
+
+
+save "$mypath/sum_month.dta", replace
+
+foreach l of local levels {
+	erase "`l'.dta"
+}
+
+set graph on
+twoway (line mean_Fdis_CV sym, lwidth(thick) sort), ///
+xtitle("") ytitle("Mean of Fdis CV") xlabel(, format(%tm)) /// 
+text(0.25 308 "Plaza Accord", place(north) size(small)) ///
+text(0.52 359 "Asset Bubble Peak", place(north) size(small)) ///
+text(0.6 420 "Great Hanshin Earthquake", place(north) size(small)) ///
+text(0.52 454 "Asian Financial Crisis", place(north) size(small)) ///
+text(0.55 584 "Financial cisis", place(north) size(small)) ///
+text(0.25 614 "Tohoku Earthquake and Tsunami", place(north) size(small)) ///
+text(0.5 672 "Negative Interest Rate Policy", place(north) size(small)) ///
+text(1 717 "Consumption Tax Hike", place(north) size(small)) ///
+text(1.5 720 "COVID-19 Pandemic", place(north) size(small)) ///
+name(mean_Fdis_CV, replace)
+graph export "$mypath/graph/meanfdiscv_m.png", replace
+twoway (line mean_FE_log sym,lwidth(thick) sort), xtitle("") ytitle("Mean of FE log") xlabel(, format(%tm)) /// 
+text(0.25 308 "Plaza Accord", place(north) size(small)) ///
+text(0.52 359 "Asset Bubble Peak", place(north) size(small)) ///
+text(0.6 420 "Great Hanshin Earthquake", place(north) size(small)) ///
+text(0.52 454 "Asian Financial Crisis", place(north) size(small)) ///
+text(0.55 584 "Financial cisis", place(north) size(small)) ///
+text(0.25 614 "Tohoku Earthquake and Tsunami", place(north) size(small)) ///
+text(0.5 672 "Negative Interest Rate Policy", place(north) size(small)) ///
+text(1 717 "Consumption Tax Hike", place(north) size(small)) ///
+text(1.5 720 "COVID-19 Pandemic", place(north) size(small)) ///
+name(mean_FE_log, replace)
+graph export "$mypath/graph/meanfelog_m.png", replace
+twoway (line mean_FE_pct sym,lwidth(thick) sort), xtitle("") ytitle("Mean of FE pct") xlabel(, format(%tm)) /// 
+text(0.25 308 "Plaza Accord", place(north) size(small)) ///
+text(0.52 359 "Asset Bubble Peak", place(north) size(small)) ///
+text(0.6 420 "Great Hanshin Earthquake", place(north) size(small)) ///
+text(0.52 454 "Asian Financial Crisis", place(north) size(small)) ///
+text(0.55 584 "Financial cisis", place(north) size(small)) ///
+text(0.25 614 "Tohoku Earthquake and Tsunami", place(north) size(small)) ///
+text(0.5 672 "Negative Interest Rate Policy", place(north) size(small)) ///
+text(1 717 "Consumption Tax Hike", place(north) size(small)) ///
+text(1.5 720 "COVID-19 Pandemic", place(north) size(small)) ///
+name(mean_FE_pct, replace)
+graph export "$mypath/graph/meanfepct_m.png", replace
+graph combine mean_Fdis_CV mean_FE_log mean_FE_pct, title("") graphregion(color(white)) name(combo, replace)
+graph export "$mypath/graph/combo_m.png", replace
+set graph off
+
 $horizon
+
+restore
 
 keep if horizon >= 0
 

@@ -7,6 +7,7 @@ global mypath "/Users/tsenga/ibes-japan/ibes-japan"
 use $mypath/merged.dta, clear
 
 capture mkdir $mypath/graph 
+capture mkdir $mypath/table 
 
 
 
@@ -37,6 +38,112 @@ restore
 
 merge m:1 OFTIC eyear using "$mypath/sd_growth.dta"
 drop _merge
+
+
+preserve
+keep OFTIC eyear ACTUAL sale ni NUMEST Fdis_CV FE_log FE_pct MEDEST SD_ACTUAL_growth Age
+winsor2 *, replace cuts(1 99) trim
+collapse (mean) ACTUAL sale ni NUMEST Fdis_CV FE_log FE_pct MEDEST SD_ACTUAL_growth Age, by(OFTIC eyear)
+
+xtset OFTIC eyear
+
+eststo clear
+
+
+gen ln_sale = log(sale)
+gen ln_age = log(Age)
+
+reg Fdis_CV NUMEST 
+estadd local YearFE = "N" 
+estadd local FirmFE = "N"
+est store Fdis_CV_NN
+
+areg Fdis_CV NUMEST i.eyear, absorb(OFTIC) vce(robust)
+estadd local YearFE = "Y" 
+estadd local FirmFE = "Y"
+est store Fdis_CV_YY
+
+areg Fdis_CV NUMEST i.eyear ln_sale ln_age, absorb(OFTIC) vce(robust)
+estadd local YearFE = "Y" 
+estadd local FirmFE = "Y"
+est store Fdis_CV_YY_A
+
+areg Fdis_CV NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth, absorb(OFTIC) vce(robust)
+estadd local YearFE = "Y" 
+estadd local FirmFE = "Y"
+est store Fdis_CV_YY_B
+
+esttab Fdis_CV_NN Fdis_CV_YY Fdis_CV_YY_A Fdis_CV_YY_B ///
+using $mypath/table/reg_T01.tex, replace ///
+beta(%6.3f) tex nomti nodepvars ///
+star(* 0.10 ** 0.05 *** 0.01) nogaps ///
+label stats(YearFE FirmFE N r2 , fmt(%9.0g %9.0g %9.0g %8.3f) ///
+labels("Year FE" "Firm FE" Observations R^2 )) t noconstant ///
+keep(NUMEST ln_sale ln_age SD_ACTUAL_growth) ///
+noomitted ///
+
+
+reg FE_log NUMEST 
+estadd local YearFE = "N" 
+estadd local FirmFE = "N"
+est store FE_log_NN
+
+areg FE_log NUMEST i.eyear, absorb(OFTIC) vce(robust)
+estadd local YearFE = "Y" 
+estadd local FirmFE = "Y"
+est store FE_log_YY
+
+areg FE_log NUMEST i.eyear ln_sale ln_age, absorb(OFTIC) vce(robust)
+estadd local YearFE = "Y" 
+estadd local FirmFE = "Y"
+est store FE_log_YY_A
+
+areg FE_log NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth, absorb(OFTIC) vce(robust)
+estadd local YearFE = "Y" 
+estadd local FirmFE = "Y"
+est store FE_log_YY_B
+
+esttab FE_log_NN FE_log_YY FE_log_YY_A FE_log_YY_B ///
+using $mypath/table/reg_T02.tex, replace ///
+beta(%6.3f) tex nomti nodepvars ///
+star(* 0.10 ** 0.05 *** 0.01) nogaps ///
+label stats(YearFE FirmFE N r2 , fmt(%9.0g %9.0g %9.0g %8.3f) ///
+labels("Year FE" "Firm FE" Observations R^2 )) t noconstant ///
+keep(NUMEST ln_sale ln_age SD_ACTUAL_growth) ///
+noomitted ///
+
+
+reg NUMEST ACTUAL 
+estadd local YearFE = "N" 
+estadd local FirmFE = "N"
+est store NUMEST_NN
+
+areg NUMEST ACTUAL i.eyear, absorb(OFTIC) vce(robust)
+estadd local YearFE = "Y" 
+estadd local FirmFE = "Y"
+est store NUMEST_YY
+
+areg NUMEST ACTUAL i.eyear ln_sale ln_age, absorb(OFTIC) vce(robust)
+estadd local YearFE = "Y" 
+estadd local FirmFE = "Y"
+est store NUMEST_YY_A
+
+areg NUMEST ACTUAL i.eyear ln_sale ln_age SD_ACTUAL_growth, absorb(OFTIC) vce(robust)
+estadd local YearFE = "Y" 
+estadd local FirmFE = "Y"
+est store NUMEST_YY_B
+
+esttab NUMEST_NN NUMEST_YY NUMEST_YY_A NUMEST_YY_B ///
+using $mypath/table/reg_T03.tex, replace ///
+beta(%6.3f) tex nomti nodepvars ///
+star(* 0.10 ** 0.05 *** 0.01) nogaps ///
+label stats(YearFE FirmFE N r2 , fmt(%9.0g %9.0g %9.0g %8.3f) ///
+labels("Year FE" "Firm FE" Observations R^2 )) t noconstant ///
+keep(ACTUAL ln_sale ln_age SD_ACTUAL_growth) ///
+noomitted ///
+
+restore
+
 
 levelsof eyear, local(levels)
 foreach l of local levels{

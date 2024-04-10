@@ -36,6 +36,9 @@ gen str7 period_str = string(period, "%tm")
 sort oftic period_str
 merge 1:1 oftic period using "$mypath/combined_data.dta", generate(_merge_nikkei)
 
+keep if _merge_nikkei == 3
+drop _merge_nikkei
+
 
 gen horizon = eym - sym
 

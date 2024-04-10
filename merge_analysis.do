@@ -73,7 +73,22 @@ estadd local YearFE = "Y"
 estadd local FirmFE = "Y"
 est store Fdis_CV_YY_B
 
-esttab Fdis_CV_NN Fdis_CV_YY Fdis_CV_YY_A Fdis_CV_YY_B ///
+areg Fdis_CV NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth if NUMEST>2, absorb(OFTIC) vce(robust)
+estadd local YearFE = "Y" 
+estadd local FirmFE = "Y"
+est store Fdis_CV_YY_C
+
+areg Fdis_CV NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth if NUMEST>5, absorb(OFTIC) vce(robust)
+estadd local YearFE = "Y" 
+estadd local FirmFE = "Y"
+est store Fdis_CV_YY_D
+
+areg Fdis_CV NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth if NUMEST>10, absorb(OFTIC) vce(robust)
+estadd local YearFE = "Y" 
+estadd local FirmFE = "Y"
+est store Fdis_CV_YY_E
+
+esttab Fdis_CV_NN Fdis_CV_YY Fdis_CV_YY_A Fdis_CV_YY_B Fdis_CV_YY_C Fdis_CV_YY_D  ///
 using $mypath/table/reg_T01.tex, replace ///
 beta(%6.3f) tex nomti nodepvars ///
 star(* 0.10 ** 0.05 *** 0.01) nogaps ///
@@ -103,7 +118,17 @@ estadd local YearFE = "Y"
 estadd local FirmFE = "Y"
 est store FE_log_YY_B
 
-esttab FE_log_NN FE_log_YY FE_log_YY_A FE_log_YY_B ///
+areg FE_log NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth if NUMEST>2, absorb(OFTIC) vce(robust)
+estadd local YearFE = "Y" 
+estadd local FirmFE = "Y"
+est store FE_log_YY_C
+
+areg FE_log NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth if NUMEST>5, absorb(OFTIC) vce(robust)
+estadd local YearFE = "Y" 
+estadd local FirmFE = "Y"
+est store FE_log_YY_D
+
+esttab FE_log_NN FE_log_YY FE_log_YY_A FE_log_YY_B FE_log_YY_C  FE_log_YY_D  ///
 using $mypath/table/reg_T02.tex, replace ///
 beta(%6.3f) tex nomti nodepvars ///
 star(* 0.10 ** 0.05 *** 0.01) nogaps ///
@@ -133,7 +158,18 @@ estadd local YearFE = "Y"
 estadd local FirmFE = "Y"
 est store NUMEST_YY_B
 
-esttab NUMEST_NN NUMEST_YY NUMEST_YY_A NUMEST_YY_B ///
+areg NUMEST ACTUAL i.eyear ln_sale ln_age SD_ACTUAL_growth if NUMEST>2, absorb(OFTIC) vce(robust)
+estadd local YearFE = "Y" 
+estadd local FirmFE = "Y"
+est store NUMEST_YY_C
+
+areg NUMEST ACTUAL i.eyear ln_sale ln_age SD_ACTUAL_growth if NUMEST>5, absorb(OFTIC) vce(robust)
+estadd local YearFE = "Y" 
+estadd local FirmFE = "Y"
+est store NUMEST_YY_D
+
+
+esttab NUMEST_NN NUMEST_YY NUMEST_YY_A NUMEST_YY_B NUMEST_YY_C NUMEST_YY_D  ///
 using $mypath/table/reg_T03.tex, replace ///
 beta(%6.3f) tex nomti nodepvars ///
 star(* 0.10 ** 0.05 *** 0.01) nogaps ///
@@ -143,7 +179,7 @@ keep(ACTUAL ln_sale ln_age SD_ACTUAL_growth) ///
 noomitted ///
 
 restore
-
+444
 
 levelsof eyear, local(levels)
 foreach l of local levels{

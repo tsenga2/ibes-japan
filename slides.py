@@ -2,8 +2,9 @@ import os
 import pyperclip
 
 # Get a list of all PNG files in the Graph directory
-graph_dir = "/Users/kawabatahatsu/Desktop/ra/IBES/international/graph"
-png_files = [f for f in os.listdir(graph_dir) if f.endswith('.png')]
+#graph_dir = "/Users/kawabatahatsu/Desktop/ra/IBES/international/graph"
+graph_dir = "/Users/tsenga/ibes-japan/ibes-japan/graph"
+png_files = sorted([f for f in os.listdir(graph_dir) if f.endswith('.png')])
 
 # Generate LaTeX code for the slides with one PNG figure per slide
 latex_code = "\\documentclass{beamer}\n\\usepackage{graphicx}\n\n\\begin{document}\n\n"

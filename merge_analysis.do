@@ -39,6 +39,9 @@ merge 1:1 oftic period using "$mypath/combined_data.dta", generate(_merge_nikkei
 keep if _merge_nikkei == 3
 drop _merge_nikkei
 
+gen highlow = highprice - lowprice
+replace highlow = highlow / openingprice
+gen abshighlow = abs(highlow)
 
 gen horizon = eym - sym
 
@@ -53,12 +56,13 @@ order OFTIC STATPERS syear eyear MEDEST ACTUAL sale ni
 sort OFTIC STATPERS syear eyear
 
 preserve
-collapse (mean) ACTUAL sale ni NUMEST Fdis_CV FE_log FE_pct MEDEST, by(OFTIC eyear)
+collapse (mean) abshighlow ACTUAL sale ni NUMEST Fdis_CV FE_log FE_pct MEDEST, by(OFTIC eyear)
 
+gen stockvol = abshighlow
 by OFTIC (eyear): gen ACTUAL_growth = (ACTUAL - ACTUAL[_n-1]) / ACTUAL[_n-1]
-by OFTIC (eyear): gen SD_ACTUAL_growth = sqrt((sum((ACTUAL_growth - ACTUAL_growth[_n-1])/ACTUAL_growth[_n-1])^2)/(_n-1))
+by OFTIC (eyear): gen SD_ACTUAL_growth = sqrt((sum((ACTUAL_growth - ACTUAL_growth[_n-1])/ACTUAL_growth[_n-1])^2)/(_N-1))
 
-keep OFTIC eyear SD_ACTUAL_growth
+keep OFTIC eyear SD_ACTUAL_growth stockvol
 save "$mypath/sd_growth.dta", replace
 restore
 
@@ -67,9 +71,9 @@ drop _merge
 
 
 preserve
-keep OFTIC eyear ACTUAL sale ni NUMEST Fdis_CV FE_log FE_pct MEDEST SD_ACTUAL_growth Age
+keep OFTIC eyear ACTUAL sale ni NUMEST Fdis_CV FE_log FE_pct MEDEST SD_ACTUAL_growth Age stockvol
 winsor2 *, replace cuts(1 99) trim
-collapse (mean) ACTUAL sale ni NUMEST Fdis_CV FE_log FE_pct MEDEST SD_ACTUAL_growth Age, by(OFTIC eyear)
+collapse (mean) ACTUAL sale ni NUMEST Fdis_CV FE_log FE_pct MEDEST SD_ACTUAL_growth Age stockvol, by(OFTIC eyear)
 
 xtset OFTIC eyear
 
@@ -94,22 +98,22 @@ estadd local YearFE = "Y"
 estadd local FirmFE = "Y"
 est store Fdis_CV_YY_A
 
-areg Fdis_CV NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth, absorb(OFTIC) vce(robust)
+areg Fdis_CV NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth stockvol, absorb(OFTIC) vce(robust)
 estadd local YearFE = "Y" 
 estadd local FirmFE = "Y"
 est store Fdis_CV_YY_B
 
-areg Fdis_CV NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth if NUMEST>2, absorb(OFTIC) vce(robust)
+areg Fdis_CV NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth stockvol if NUMEST>2, absorb(OFTIC) vce(robust)
 estadd local YearFE = "Y" 
 estadd local FirmFE = "Y"
 est store Fdis_CV_YY_C
 
-areg Fdis_CV NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth if NUMEST>5, absorb(OFTIC) vce(robust)
+areg Fdis_CV NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth stockvol if NUMEST>5, absorb(OFTIC) vce(robust)
 estadd local YearFE = "Y" 
 estadd local FirmFE = "Y"
 est store Fdis_CV_YY_D
 
-areg Fdis_CV NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth if NUMEST>10, absorb(OFTIC) vce(robust)
+areg Fdis_CV NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth stockvol if NUMEST>10, absorb(OFTIC) vce(robust)
 estadd local YearFE = "Y" 
 estadd local FirmFE = "Y"
 est store Fdis_CV_YY_E
@@ -120,7 +124,7 @@ beta(%6.3f) tex nomti nodepvars ///
 star(* 0.10 ** 0.05 *** 0.01) nogaps ///
 label stats(YearFE FirmFE N r2 , fmt(%9.0g %9.0g %9.0g %8.3f) ///
 labels("Year FE" "Firm FE" Observations R^2 )) t noconstant ///
-keep(NUMEST ln_sale ln_age SD_ACTUAL_growth) ///
+keep(NUMEST ln_sale ln_age SD_ACTUAL_growth stockvol) ///
 noomitted ///
 
 
@@ -139,17 +143,17 @@ estadd local YearFE = "Y"
 estadd local FirmFE = "Y"
 est store FE_log_YY_A
 
-areg FE_log NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth, absorb(OFTIC) vce(robust)
+areg FE_log NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth stockvol, absorb(OFTIC) vce(robust)
 estadd local YearFE = "Y" 
 estadd local FirmFE = "Y"
 est store FE_log_YY_B
 
-areg FE_log NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth if NUMEST>2, absorb(OFTIC) vce(robust)
+areg FE_log NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth stockvol if NUMEST>2, absorb(OFTIC) vce(robust)
 estadd local YearFE = "Y" 
 estadd local FirmFE = "Y"
 est store FE_log_YY_C
 
-areg FE_log NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth if NUMEST>5, absorb(OFTIC) vce(robust)
+areg FE_log NUMEST i.eyear ln_sale ln_age SD_ACTUAL_growth stockvol if NUMEST>5, absorb(OFTIC) vce(robust)
 estadd local YearFE = "Y" 
 estadd local FirmFE = "Y"
 est store FE_log_YY_D
@@ -160,7 +164,7 @@ beta(%6.3f) tex nomti nodepvars ///
 star(* 0.10 ** 0.05 *** 0.01) nogaps ///
 label stats(YearFE FirmFE N r2 , fmt(%9.0g %9.0g %9.0g %8.3f) ///
 labels("Year FE" "Firm FE" Observations R^2 )) t noconstant ///
-keep(NUMEST ln_sale ln_age SD_ACTUAL_growth) ///
+keep(NUMEST ln_sale ln_age SD_ACTUAL_growth stockvol) ///
 noomitted ///
 
 
@@ -179,17 +183,17 @@ estadd local YearFE = "Y"
 estadd local FirmFE = "Y"
 est store NUMEST_YY_A
 
-areg NUMEST ACTUAL i.eyear ln_sale ln_age SD_ACTUAL_growth, absorb(OFTIC) vce(robust)
+areg NUMEST ACTUAL i.eyear ln_sale ln_age SD_ACTUAL_growth stockvol, absorb(OFTIC) vce(robust)
 estadd local YearFE = "Y" 
 estadd local FirmFE = "Y"
 est store NUMEST_YY_B
 
-areg NUMEST ACTUAL i.eyear ln_sale ln_age SD_ACTUAL_growth if NUMEST>2, absorb(OFTIC) vce(robust)
+areg NUMEST ACTUAL i.eyear ln_sale ln_age SD_ACTUAL_growth stockvol if NUMEST>2, absorb(OFTIC) vce(robust)
 estadd local YearFE = "Y" 
 estadd local FirmFE = "Y"
 est store NUMEST_YY_C
 
-areg NUMEST ACTUAL i.eyear ln_sale ln_age SD_ACTUAL_growth if NUMEST>5, absorb(OFTIC) vce(robust)
+areg NUMEST ACTUAL i.eyear ln_sale ln_age SD_ACTUAL_growth stockvol if NUMEST>5, absorb(OFTIC) vce(robust)
 estadd local YearFE = "Y" 
 estadd local FirmFE = "Y"
 est store NUMEST_YY_D
@@ -201,7 +205,7 @@ beta(%6.3f) tex nomti nodepvars ///
 star(* 0.10 ** 0.05 *** 0.01) nogaps ///
 label stats(YearFE FirmFE N r2 , fmt(%9.0g %9.0g %9.0g %8.3f) ///
 labels("Year FE" "Firm FE" Observations R^2 )) t noconstant ///
-keep(ACTUAL ln_sale ln_age SD_ACTUAL_growth) ///
+keep(ACTUAL ln_sale ln_age SD_ACTUAL_growth stockvol) ///
 noomitted ///
 
 restore
@@ -601,7 +605,7 @@ restore
 
 
 describe
-winsor2 Fdis_CV NUMEST ACTUAL STDEV SD_ACTUAL_growth, replace cuts(1 99) trim
+winsor2 Fdis_CV NUMEST ACTUAL STDEV SD_ACTUAL_growth stockvol, replace cuts(1 99) trim
 
 set graph on
 
@@ -635,8 +639,14 @@ binscatter SD_ACTUAL_growth Fdis_CV, ytitle("Volatility of EPS growth") name(hhh
 graph export "$mypath/graph/SdactualgrowthFdisCV.png", replace
 binscatter SD_ACTUAL_growth ACTUAL, ytitle("Volatility of EPS growth") name(iii, replace)
 graph export "$mypath/graph/SdactualgrowthActual.png", replace
+binscatter stockvol NUMEST, ytitle("Volatility of stock price") name(jjj, replace)
+graph export "$mypath/graph/StockvolNumest.png", replace
+binscatter stockvol Fdis_CV, ytitle("Volatility of stock price") name(kkk, replace)
+graph export "$mypath/graph/StockvolFdisCV.png", replace
+binscatter stockvol ACTUAL, ytitle("Volatility of stock price") name(lll, replace)
+graph export "$mypath/graph/StockvolActual.png", replace
 
-graph combine stnm bbb stho nmho acnm acst acho aaa ccc ddd eee fff hhh iii, title("") graphregion(color(white)) name(combo2, replace)
+graph combine stnm bbb stho nmho acnm acst acho aaa ccc ddd eee fff hhh iii jjj kkk lll, title("") graphregion(color(white)) name(combo2, replace)
 graph export "$mypath/graph/combo_binscatter.png", replace
 set graph off
 

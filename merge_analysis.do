@@ -9,11 +9,34 @@ use $mypath/merged.dta, clear
 capture mkdir $mypath/graph 
 capture mkdir $mypath/table 
 
+gen oftic = OFTIC
+gen period = string(sym)
 
+preserve
+import delimited "$mypath/combined_data.csv", clear
+collapse *, by(oftic period)
+save "$mypath/combined_data.dta", replace
+restore
 
-keep if _merge == 3
-drop _merge
+rename _merge _merge_dbj
+sort oftic period sym
+order oftic period sym
 
+keep if _merge_dbj == 3
+drop _merge_dbj
+
+// Check if oftic and period uniquely identify observations in the master dataset
+isid oftic period
+
+sort oftic period
+merge 1:1 oftic period using "$mypath/combined_data.dta", generate(_merge_nikkei)
+
+// Check if oftic and period uniquely identify observations in the merged dataset
+isid oftic period
+555
+merge 1:1 oftic period using "$mypath/combined_data.dta", generate(_merge_nikkei)
+
+777
 gen horizon = eym - sym
 
 gen Fdis_CV =  STDEV/abs(MEDEST)
@@ -179,7 +202,7 @@ keep(ACTUAL ln_sale ln_age SD_ACTUAL_growth) ///
 noomitted ///
 
 restore
-444
+
 
 levelsof eyear, local(levels)
 foreach l of local levels{
@@ -368,6 +391,7 @@ foreach l of local levels {
 
 
 save "$mypath/sum_month.dta", replace
+
 
 foreach l of local levels {
 	erase "`l'.dta"

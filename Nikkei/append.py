@@ -25,12 +25,11 @@ for file in csv_files:
 
 # Concatenate all DataFrames vertically
 combined_df = pd.concat(dataframes, ignore_index=True)
-
+# Assuming the original column is named 'original_period'
+combined_df['期間'] = pd.to_datetime(combined_df['期間'], format='%Y/%m').dt.strftime('%Ym%m')
 # Print the combined DataFrame
 print(combined_df)
 
-# Convert the '期間' column to have 'm' instead of '/'
-combined_df['期間'] = combined_df['期間'].str.replace('/', 'm')
 
 
 # Rename columns to English

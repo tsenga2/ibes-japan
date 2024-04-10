@@ -10,11 +10,17 @@ capture mkdir $mypath/graph
 capture mkdir $mypath/table 
 
 gen oftic = OFTIC
-gen period = string(sym)
+generate period = sym
+format period %tm
 
 preserve
 import delimited "$mypath/combined_data.csv", clear
-collapse *, by(oftic period)
+duplicates drop oftic period, force
+
+gen period_float = monthly(period, "YM")
+format period_float %tm
+drop period
+rename period_float period
 save "$mypath/combined_data.dta", replace
 restore
 
@@ -24,19 +30,13 @@ order oftic period sym
 
 keep if _merge_dbj == 3
 drop _merge_dbj
-
-// Check if oftic and period uniquely identify observations in the master dataset
-isid oftic period
-
 sort oftic period
+
+gen str7 period_str = string(period, "%tm")
+sort oftic period_str
 merge 1:1 oftic period using "$mypath/combined_data.dta", generate(_merge_nikkei)
 
-// Check if oftic and period uniquely identify observations in the merged dataset
-isid oftic period
-555
-merge 1:1 oftic period using "$mypath/combined_data.dta", generate(_merge_nikkei)
 
-777
 gen horizon = eym - sym
 
 gen Fdis_CV =  STDEV/abs(MEDEST)

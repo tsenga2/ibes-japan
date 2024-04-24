@@ -105,8 +105,29 @@ format sym %tm
 keep NIKKEI225 JPNPRMNTO01GYSAM JPNPROMANMISMEI JPNPRMNTO01GPSAM JPNPRMNTO01IXOBM GEPUCURRENT GEPUPPP JPNEPUINDXM sym
 save "$mypath/japan-tseries.dta", replace
 
+
+
+* Import the daily Nikkei 225 index data from FRED
+import fred NIKKEI225, clear
+
+gen syear=year(daten)
+gen sm=month(daten)
+gen sym = ym(syear, sm)
+gen month = sym
+format sym %tm
+
+* Calculate daily returns
+generate returns = ln(NIKKEI225 / NIKKEI225[_n-1])
+
+* Collapse data to monthly frequency and calculate volatility
+collapse (sd) volatility=returns, by(sym)
+
+save "$mypath/nikkei_volatility.dta", replace
+
 use "$mypath/ibes-summary-japan-tseries.dta", clear
 merge 1:1 sym using "$mypath/japan-tseries.dta", nogenerate keep(match)
+merge 1:1 sym using "$mypath/nikkei_volatility.dta", nogenerate keep(match)
+
 
 tsset sym
 tssmooth ma JPNEPUINDXM_MA = JPNEPUINDXM, window(6 1 0)
@@ -139,9 +160,17 @@ twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
        name(mean_Fdis_CV_NIKKEI225, replace)
        graph export "$mypath/graph/mean_Fdis_CV_NIKKEI225.png", replace
 
+twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
+       (tsline volatility, yaxis(2) lwidth(medthick) lpattern(dash)), ///
+       ytitle("", axis(1)) ///
+       ytitle("", axis(2)) ///
+       xtitle("") ///
+       legend(order(1 "Mean Forecast Dispersion" 2 "NIKKEI 225 Volatility") position(inside)) ///
+       name(mean_Fdis_CV_NIKKEI225, replace)
+       graph export "$mypath/graph/mean_Fdis_CV_NIKKEI225_vol.png", replace
 
 // Save the variable names in a local macro
-local variables mean_Fdis_CV JPNEPUINDXM JPNEPUINDXM_MA JPNPRMNTO01GYSAM NIKKEI225
+local variables mean_Fdis_CV JPNEPUINDXM JPNEPUINDXM_MA JPNPRMNTO01GYSAM NIKKEI225 volatility
 
 // Open a LaTeX file for writing
 file open mylatexfile using "$mypath/table/cross_correlation.tex", write replace

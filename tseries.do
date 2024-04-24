@@ -169,8 +169,59 @@ twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
        name(mean_Fdis_CV_NIKKEI225, replace)
        graph export "$mypath/graph/mean_Fdis_CV_NIKKEI225_vol.png", replace
 
+
+********************************************************************************
+************************** "Uncertainy is higher during recessions" regression
+eststo clear 
+rename JPNPRMNTO01GPSAM IIP
+rename mean_Fdis_CV Fdis
+rename JPNEPUINDXM EPU
+rename volatility vol
+rename NIKKEI225 nikkei
+
+// Loop over the dependent variables
+local depvars Fdis EPU vol
+
+// Loop over the independent variables
+local indvars IIP nikkei
+
+label variable Fdis "\textbf{Forecast dispersion}"
+label variable EPU "\textbf{EPU}"
+label variable vol "\textbf{Volatility}"
+label variable IIP "\textbf{IIP}"
+label variable nikkei "\textbf{NIKKEI 225}"
+
+
+// Run the regressions and store the results
+foreach y of local depvars {
+    foreach x of local indvars {
+        quietly reg `y' `x'
+        eststo `y'_`x'
+    }
+}
+
+
+// Create the table of regression results
+esttab * using $mypath/table/reg_ts.tex, replace ///
+    star(* 0.10 ** 0.05 *** 0.01) nogaps ///
+    nodepvars beta(%6.3f) tex ///
+    stats(N r2 , fmt(%9.0g %5.0g) ///
+    labels(Observations R^2 )) t noconstant ///
+    title("Regression Results") ///
+    mtitles("Model 1" "Model 2" "Model 3" "Model 4" "Model 5" "Model 6") ///
+    addnotes("Dependent variables: mean_Fdis_CV, JPNEPUINDXM, volatility" ///
+             "Independent variables: JPNPRMNTO01GPSAM, NIKKEI225") ///
+    prehead(\begin{tabular}{l*{@M}{c}}\tabularnewline \hline & \multicolumn{2}{c}{\textbf{Forecast dispersion} }& \multicolumn{2}{c}{\textbf{EPU}}& \multicolumn{2}{c}{\textbf{Volatility}}\\\) ///
+    posthead("\hline") prefoot("\hline") ///
+    postfoot("\hline \end{tabular}") ///
+    noomitted
+
+
+*******************************************************************************
+*************************************************************correlation matrix
+
 // Save the variable names in a local macro
-local variables mean_Fdis_CV JPNEPUINDXM JPNEPUINDXM_MA JPNPRMNTO01GYSAM NIKKEI225 volatility
+local variables Fdis EPU vol IIP nikkei
 
 // Open a LaTeX file for writing
 file open mylatexfile using "$mypath/table/cross_correlation.tex", write replace

@@ -74,7 +74,7 @@ local labels ""
 local label_years ""
 
 forval year = `startyear'/`endyear' {
-    if mod(`year', 5) == 0 { // Only for years divisible by 5
+    if mod(`year', 3) == 0 { // Only for years divisible by 5
         local m = ym(`year', 1) // January of each year
         local labels `labels' `m'
         local label_years `label_years' "`m'"
@@ -97,6 +97,16 @@ graph export "$mypath/graph/meanfdiscv_m.png", replace
 
 export delimited using "$mypath/ibes-summary-japan-tseries.csv", replace
 save "$mypath/ibes-summary-japan-tseries.dta", replace
+
+twoway (line mean_FE_pct sym, lwidth(thick) sort), ///
+xtitle("") ytitle("") /// 
+xlabel(`labels', format(%tm) labsize(small)) ///
+name(mean_FE_pct, replace)
+graph export "$mypath/graph/mean_FE_pct_m.png", replace
+
+export delimited using "$mypath/ibes-summary-japan-tseries.csv", replace
+save "$mypath/ibes-summary-japan-tseries.dta", replace
+
 
 import fred NIKKEI225 JPNPRMNTO01GYSAM JPNPROMANMISMEI JPNPRMNTO01GPSAM JPNPRMNTO01IXOBM GEPUCURRENT GEPUPPP JPNEPUINDXM, daterange(1987-01-01 2023-07-01) aggregate(monthly) clear
 gen sym = ym(year(daten), month(daten))
@@ -131,10 +141,32 @@ merge 1:1 sym using "$mypath/nikkei_volatility.dta", nogenerate keep(match)
 
 tsset sym
 tssmooth ma JPNEPUINDXM_MA = JPNEPUINDXM, window(6 1 0)
+tssmooth ma mean_Fdis_CV_MA = mean_Fdis_CV, window(6 1 6)
+tssmooth ma mean_FE_pct_MA = mean_FE_pct, window(6 1 6)
 
+twoway (tsline mean_Fdis_CV_MA, yaxis(1) lwidth(thick)) ///
+       (tsline mean_Fdis_CV, yaxis(2) lwidth(medthick) lpattern(dash)), ///
+       xlabel(`labels', format(%tm) labsize(small)) ///
+       ytitle("", axis(1)) ///
+       ytitle("", axis(2)) ///
+       xtitle("") ///
+       legend(order(1 "Mean Forecast Dispersion (moving average)" 2 "Mean Forecast Dispersion") position(inside)) ///
+       name(mean_Fdis_CV_MA, replace)
+       graph export "$mypath/graph/mean_Fdis_CV_MA.png", replace
+
+twoway (tsline mean_FE_pct_MA, yaxis(1) lwidth(thick)) ///
+       (tsline mean_FE_pct, yaxis(2) lwidth(medthick) lpattern(dash)), ///
+       xlabel(`labels', format(%tm) labsize(small)) ///
+       ytitle("", axis(1)) ///
+       ytitle("", axis(2)) ///
+       xtitle("") ///
+       legend(order(1 "Mean Forecast Error (moving average)" 2 "Mean Forecast Error") position(inside)) ///
+       name(mean_FE_pct_MA, replace)
+       graph export "$mypath/graph/mean_FE_pct_MA.png", replace
 
 twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
-       (tsline JPNEPUINDXM_MA, yaxis(2) lwidth(medthick) lpattern(dash)), ///
+       (tsline JPNEPUINDXM, yaxis(2) lwidth(medthick) lpattern(dash)), ///
+       xlabel(`labels', format(%tm) labsize(small)) ///
        ytitle("", axis(1)) ///
        ytitle("", axis(2)) ///
        xtitle("") ///
@@ -144,6 +176,7 @@ twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
 
 twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
        (tsline JPNPRMNTO01GYSAM, yaxis(2) lwidth(medthick) lpattern(dash)), ///
+       xlabel(`labels', format(%tm) labsize(small)) ///
        ytitle("", axis(1)) ///
        ytitle("", axis(2)) ///
        xtitle("") ///
@@ -153,6 +186,7 @@ twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
 
 twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
        (tsline NIKKEI225, yaxis(2) lwidth(medthick) lpattern(dash)), ///
+       xlabel(`labels', format(%tm) labsize(small)) ///
        ytitle("", axis(1)) ///
        ytitle("", axis(2)) ///
        xtitle("") ///
@@ -162,6 +196,7 @@ twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
 
 twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
        (tsline volatility, yaxis(2) lwidth(medthick) lpattern(dash)), ///
+       xlabel(`labels', format(%tm) labsize(small)) ///
        ytitle("", axis(1)) ///
        ytitle("", axis(2)) ///
        xtitle("") ///
@@ -175,21 +210,27 @@ twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
 eststo clear 
 rename JPNPRMNTO01GPSAM IIP
 rename mean_Fdis_CV Fdis
+rename mean_FE_pct FE
 rename JPNEPUINDXM EPU
 rename volatility vol
 rename NIKKEI225 nikkei
 
 // Loop over the dependent variables
-local depvars Fdis EPU vol
+local depvars Fdis FE EPU vol
 
 // Loop over the independent variables
 local indvars IIP nikkei
 
 label variable Fdis "\textbf{Forecast dispersion}"
+label variable FE "\textbf{Forecast error}"
 label variable EPU "\textbf{EPU}"
 label variable vol "\textbf{Volatility}"
 label variable IIP "\textbf{IIP}"
 label variable nikkei "\textbf{NIKKEI 225}"
+
+
+gen month = mod(sym, 12)
+gen year = floor(sym / 12) + 1960
 
 
 // Run the regressions and store the results
@@ -200,22 +241,57 @@ foreach y of local depvars {
     }
 }
 
+// Run the regressions and store the results
+foreach y of local depvars {
+    foreach x of local indvars {
+        quietly reg `y' `x' i.month
+        eststo `y'_`x'_month
+    }
+}
+
+
+// Run the regressions and store the results
+foreach y of local depvars {
+    foreach x of local indvars {
+        quietly reg `y' `x' i.year
+        eststo `y'_`x'_year
+    }
+}
 
 // Create the table of regression results
-esttab * using $mypath/table/reg_ts.tex, replace ///
+esttab EPU_nikkei EPU_nikkei_month EPU_nikkei_year ///
+       vol_nikkei vol_nikkei_month vol_nikkei_year ///
+       using $mypath/table/reg_ts_1.tex, replace ///
     star(* 0.10 ** 0.05 *** 0.01) nogaps ///
     nodepvars beta(%6.3f) tex ///
     stats(N r2 , fmt(%9.0g %5.0g) ///
     labels(Observations R^2 )) t noconstant ///
     title("Regression Results") ///
     mtitles("Model 1" "Model 2" "Model 3" "Model 4" "Model 5" "Model 6") ///
+    keep(nikkei) ///
     addnotes("Dependent variables: mean_Fdis_CV, JPNEPUINDXM, volatility" ///
              "Independent variables: JPNPRMNTO01GPSAM, NIKKEI225") ///
-    prehead(\begin{tabular}{l*{@M}{c}}\tabularnewline \hline & \multicolumn{2}{c}{\textbf{Forecast dispersion} }& \multicolumn{2}{c}{\textbf{EPU}}& \multicolumn{2}{c}{\textbf{Volatility}}\\\) ///
+    prehead(\begin{tabular}{l*{@M}{c}}\tabularnewline \hline & \multicolumn{3}{c}{\textbf{EPU} }& \multicolumn{3}{c}{\textbf{Stock volatility}}\\\) ///
     posthead("\hline") prefoot("\hline") ///
     postfoot("\hline \end{tabular}") ///
     noomitted
 
+esttab Fdis_nikkei Fdis_nikkei_month Fdis_nikkei_year ///
+       FE_nikkei FE_nikkei_month FE_nikkei_year ///
+       using $mypath/table/reg_ts_2.tex, replace ///
+    star(* 0.10 ** 0.05 *** 0.01) nogaps ///
+    nodepvars beta(%6.3f) tex ///
+    stats(N r2 , fmt(%9.0g %5.0g) ///
+    labels(Observations R^2 )) t noconstant ///
+    title("Regression Results") ///
+    mtitles("Model 1" "Model 2" "Model 3" "Model 4" "Model 5" "Model 6") ///
+    keep(nikkei) ///
+    addnotes("Dependent variables: mean_Fdis_CV, mean_FE_pct" ///
+             "Independent variables: NIKKEI225") ///
+    prehead(\begin{tabular}{l*{@M}{c}}\tabularnewline \hline & \multicolumn{3}{c}{\textbf{Forecast dispersion} }& \multicolumn{3}{c}{\textbf{Forecast error}}\\\) ///
+    posthead("\hline") prefoot("\hline") ///
+    postfoot("\hline \end{tabular}") ///
+    noomitted
 
 *******************************************************************************
 *************************************************************correlation matrix

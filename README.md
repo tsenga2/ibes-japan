@@ -28,6 +28,8 @@
 
 Overall, this do-file performs a comprehensive analysis of the relationships between analyst forecast dispersion, forecast error, economic uncertainty, and stock market performance in Japan using the IBES dataset and additional macroeconomic data from FRED.
 
+---
+---
 ## describe.do
 ## Data Preparation and Analysis
 

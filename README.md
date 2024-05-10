@@ -27,3 +27,46 @@
 10. It creates LaTeX tables of the regression results and a cross-correlation matrix of the main variables.
 
 Overall, this do-file performs a comprehensive analysis of the relationships between analyst forecast dispersion, forecast error, economic uncertainty, and stock market performance in Japan using the IBES dataset and additional macroeconomic data from FRED.
+
+## describe.do
+## Data Preparation and Analysis
+
+- Set the working directory to $mypath/graph and create a new folder $mypath/table if it doesn't exist.
+- Filter the dataset to include only observations where CURCODE is "JPY".
+- Generate new variables:
+
+- syear: year of STATPERS
+- sm: month of STATPERS
+- sym: year-month combination of syear and sm
+- month: same as sym
+- eyear: year of FPEDATS
+- em: month of FPEDATS
+- eym: year-month combination of eyear and em
+
+
+- Convert OFTIC to numeric format.
+- Create additional variables:
+
+- Fdis_CV: forecast dispersion, calculated as STDEV/abs(MEDEST)
+- FE_log: forecast error (log), calculated as abs(log(ACTUAL/MEDEST))
+- FE_pct: forecast error (percentage), calculated as abs(ACTUAL/MEDEST -1)
+
+- Sort the dataset by OFTIC, sym, and eym, and order the variables.
+- Generate oftic and period variables, and drop observations with missing oftic.
+- Remove duplicate observations based on oftic and period.
+
+## Data Merging and Visualization
+
+- Preserve the current dataset.
+- Import the "combined_data.csv" file and remove duplicates based on oftic and period.
+- Convert period to a numeric format and set it as the panel time variable.
+- Save the imported dataset as "combined_data.dta".
+- Restore the preserved dataset.
+- Merge the current dataset with "combined_data.dta" based on oftic and period, generating a new variable _merge_nikkei.
+- Create indicator variables count_merge_3 and count_merge_2 to count the number of observations where _merge_nikkei is 3 and 2, respectively.
+- Collapse the data to obtain the sum of count_merge_3 and count_merge_2 for each period.
+- Create a stacked bar chart showing the number of observations for each merge type (_merge_nikkei) by period.
+- Customize the bar colors and remove the legend.
+- Export the bar chart as "merge_nikkei_counts.png" in the $mypath/graph directory.
+
+This do-file performs data preparation, generates new variables, merges datasets, and creates a visualization of the merge results using a stacked bar chart.

@@ -60,6 +60,13 @@ xtsum oftic
 
 merge 1:1 oftic period using "$mypath/combined_data.dta", generate(_merge_nikkei)
 
+gen flag = 1
+foreach var of varlist actualearningspershare-issuedsharesrightsoffbase {
+    replace flag = 0 if !mi(`var')
+}
+drop if flag == 1
+drop flag
+
 
 * Count the number of samples where _merge_nikkei == 3 and _merge_nikkei == 2
 gen count_merge_3 = (_merge_nikkei == 3)

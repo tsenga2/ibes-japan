@@ -61,6 +61,7 @@ combined_df.rename(columns={
     '発行済み株式数（権利落ベース）': 'Issued Shares Rights Off Base'
 }, inplace=True)
 
+df = df.dropna(subset=df.columns[df.columns.get_loc('actualearningspershare'):], how='all')
 
 # Export the combined DataFrame as a CSV file
 combined_df.to_csv('combined_data.csv', index=False, encoding='shift_jis')

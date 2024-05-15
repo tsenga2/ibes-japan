@@ -2,8 +2,8 @@ cls
 clear all
 set graph on
 
-global mypath "/Users/kawabatahatsu/Desktop/ra"
-*global mypath "/Users/tsenga/ibes-japan/ibes-japan"
+*global mypath "/Users/kawabatahatsu/Desktop/ra/IBES/international"
+global mypath "/Users/tsenga/ibes-japan/ibes-japan"
 use $mypath/IBES/international/ibes-summary-international.dta, clear
 
 capture mkdir $mypath/graph 
@@ -39,7 +39,7 @@ drop if oftic == .
 duplicates drop oftic period, force
 
 preserve
-import delimited "/Users/kawabatahatsu/Desktop/ra/IBES/Nikkei/combined_data.csv", clear
+import delimited "$mypath/combined_data.csv", clear
 duplicates drop oftic period, force
 
 gen period_float = monthly(period, "YM")
@@ -68,7 +68,6 @@ drop if flag == 1
 drop flag
 
 
-
 * Count the number of samples where _merge_nikkei == 3 and _merge_nikkei == 2
 gen count_merge_3 = (_merge_nikkei == 3)
 gen count_merge_2 = (_merge_nikkei == 2)
@@ -89,4 +88,95 @@ ytitle("") ///
 graphregion(color(white)) plotregion(color(white)) legend(off)
 
 graph export "$mypath/graph/merge_nikkei_counts.png", as(png) replace
+
+cls
+clear all
+set graph on
+
+*global mypath "/Users/kawabatahatsu/Desktop/ra/IBES/international"
+global mypath "/Users/tsenga/ibes-japan/ibes-japan"
+use $mypath/IBES/international/ibes-summary-international.dta, clear
+
+capture mkdir $mypath/graph 
+capture mkdir $mypath/table 
+
+keep if CURCODE == "JPY"
+
+gen syear=year(STATPERS)
+gen sm=month(STATPERS)
+gen sym = ym(syear, sm)
+gen month = sym
+format sym %tm
+
+gen eyear=year(FPEDATS)
+gen em=month(FPEDATS)
+gen eym = ym(eyear, em)
+format eym %tm
+
+destring OFTIC, replace force
+
+gen Fdis_CV =  STDEV/abs(MEDEST)
+gen FE_log = abs(log(ACTUAL/MEDEST))
+gen FE_pct = abs(ACTUAL/MEDEST -1)
+
+sort OFTIC sym eym 
+order OFTIC sym eym NUMEST ACTUAL MEDEST STDEV HIGHEST LOWEST Fdis_CV FE_log FE_pct
+
+gen oftic = OFTIC
+generate period = sym
+format period %tm
+
+drop if oftic == .
+duplicates drop oftic period, force
+
+preserve
+import delimited "$mypath/combined_data.csv", clear
+duplicates drop oftic period, force
+
+gen period_float = monthly(period, "YM")
+format period_float %tm
+drop period
+rename period_float period
+xtset oftic period
+xtsum oftic
+save "$mypath/combined_data.dta", replace
+restore
+
+gen str7 period_str = string(period, "%tm")
+sort oftic period_str
+
+xtset oftic period
+xtsum oftic
+
+
+merge 1:1 oftic period using "$mypath/combined_data.dta", generate(_merge_nikkei)
+
+gen flag = 1
+foreach var of varlist actualearningspershare-issuedsharesrightsoffbase {
+    replace flag = 0 if !mi(`var')
+}
+drop if flag == 1
+drop flag
+
+
+* Count the number of samples where _merge_nikkei == 3 and _merge_nikkei == 2
+gen count_merge_3 = (_merge_nikkei == 3)
+gen count_merge_2 = (_merge_nikkei == 2)
+
+* Collapse data to get the number of each type per period
+collapse (sum) count_merge_3 count_merge_2, by(period)
+
+* Generate a bar chart with the number of samples for each merge type by period
+* Adjust the x-axis to make it less dense by displaying fewer period labels
+local num_periods = _N
+local step = ceil(`num_periods'/10)  // Display approximately one label every 10 periods
+
+
+graph bar (asis) count_merge_3 count_merge_2, over(period) stack ///
+bar(1, bcolor(navy)) ///
+bar(2, bcolor(maroon)) ///
+ytitle("") ///
+graphregion(color(white)) plotregion(color(white)) legend(off)
+
+graph export "$mypath/graph/merge_nikkei_counts.png", as(png) 
 

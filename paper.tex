@@ -1,0 +1,403 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[margin=1.3in]{geometry}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{threeparttable}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\title{Forecast Dispersion and Forecast Errors across Firms and Time}
+\author{Hatsu Kawabata \and Tatsuro Senga}
+\date{May 15, 2024}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This paper investigates the properties of analyst forecast dispersion and forecast errors using a comprehensive dataset of Japanese firms from 1985 to 2023. We construct time-series indices of forecast dispersion and errors and explore their relationships with macroeconomic and financial market indicators. Our analysis reveals that forecast dispersion and errors are positively correlated, indicating that greater disagreement among analysts is associated with larger forecast errors. Forecast dispersion tends to be smaller for larger firms with more analyst coverage, and the number of analysts covering a firm is positively related to its size, age, and stock volatility. We find that the forecast dispersion and error indices are correlated with other popular uncertainty measures like the Economic Policy Uncertainty index, with spikes corresponding to events that heightened uncertainty. The indices are also countercyclical and negatively correlated with stock market performance. Our findings highlight the role of firm-level uncertainty in macroeconomic fluctuations and demonstrate the usefulness of analyst forecast data in studying the relationship between information, uncertainty, and the macroeconomy.
+\end{abstract}
+
+\section{Introduction}
+Expectations play a central role in macroeconomics and finance, influencing the decisions of households, businesses, and policymakers. One important source of expectations data is earnings forecasts made by financial analysts. By aggregating and analyzing these forecasts, we can gain insights into the degree of uncertainty and disagreement in the economy.
+
+This paper examines the properties and determinants of analyst forecast dispersion and forecast errors, using a comprehensive dataset of Japanese firms from 1985 to 2023. We construct novel time-series indices of forecast dispersion and errors, which provide a real-time measure of firm-level uncertainty. We then explore the relationships between these indices and various firm characteristics, as well as macroeconomic and financial market indicators.
+
+Our analysis reveals several key findings. First, forecast dispersion and errors are positively correlated, indicating that greater disagreement among analysts is associated with larger forecast errors. This suggests that dispersion reflects genuine uncertainty rather than differences in opinion or information.
+
+Second, the number of analysts covering a firm plays an important role in shaping forecast properties. Dispersion and errors tend to be smaller for firms with more analyst coverage, even after controlling for other factors such as firm size, age, and volatility. We interpret this as evidence of information spillovers and learning among analysts.
+
+Third, the forecast dispersion and error indices exhibit significant time-series variation, with spikes corresponding to major economic and geopolitical events. The indices are positively correlated with other popular uncertainty measures like the Economic Policy Uncertainty (EPU) index for Japan. They also display a clear countercyclical pattern, rising during downturns and periods of stock market weakness.
+
+Overall, our findings highlight the usefulness of analyst forecast data in measuring and understanding the evolution of firm-level uncertainty over time. The indices we develop can serve as a valuable tool for policymakers and market participants to monitor uncertainty in real time. 
+
+Our paper contributes to several strands of literature. We add to the growing body of work on cross-sectional and time-series patterns in analyst forecasts (e.g. [@hong2000bad; @bali2016stock; @chen2021analyst]). In particular, our study is one of the first to examine forecast dispersion and errors in a non-US context over an extended time period. We also contribute to research on the role of uncertainty in macroeconomic fluctuations (e.g. [@bloom2009impact; @kozeniauskas2018what; @coibion2018rule]). Our indices provide a novel firm-level perspective that complements the macroeconomic uncertainty measures commonly used in the literature.
+
+The rest of the paper is organized as follows. Section 2 describes the data and methodology. Section 3 presents our empirical findings on the cross-sectional determinants of forecast dispersion and errors. Section 4 introduces the time-series indices and explores their properties and correlations. Finally, Section 5 concludes.
+
+
+\bigskip
+\section{Data and Methodology}
+We construct a comprehensive dataset by combining earnings forecasts made by analysts from IBES, stock prices from NikkeiNeeds, and financial information from the Development Bank of Japan (DBJ). 
+We define key variables such as forecast dispersion, forecast errors, and the number of analysts covering each firm.
+Our dataset covers a wide range of public firms in Japan from 1985 to 2023, allowing us to study the evolution of forecast dispersion and errors over time. 
+
+\subsection{IBES Data}
+IBES Data is a database that collects and compiles financial analyst earnings estimates and recommendations. 
+It provides a comprehensive view of analyst expectations and consensus estimates, including earnings per share (EPS) estimates, buy/hold/sell recommendations, and price targets. 
+The data covers a wide range of companies across various industries and regions and is available at different frequencies.
+
+Figure \ref{fig:merge_nikkei_counts} shows the number of firms in IBES matched with NikkeiNeeds and DBJ data over time.
+The fraction of firms in NikkeiNeeds and DBJ data being matched with IBES data was just below 30\% at early stage (450 firms out of 1,500 firms),
+while the fraction started to increase to 50\% at the end of 2010 (1,000 firms out of 2,000 firms).
+As become clear later, the matched sample and the unmatched sample have similar characteristics in terms of the dispersion of forecasts and forecast errors.
+
+
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1.0\textwidth]{graph/merge_nikkei_counts.png}
+    \caption{IBES being matched with NikkeiNeeds and DBJ}
+    \label{fig:merge_nikkei_counts}
+\end{figure}
+
+
+
+\subsection{Dataset Construction}
+For the analysis below, we construct two datasets: Dataset A combines IBES and NikkeiNeeds data, including consensus forecasts, forecast dispersion, forecast errors, stock prices and volatility at a monthly frequency from January 1985 to June 2023.
+Dataset B adds financial information from the Development Bank of Japan to Dataset A at an annual frequency from 1985 to 2023.
+
+We define key variables such as forecast dispersion, forecast errors, and the number of analysts covering each firm. 
+To this end, we take the earnings per share (EPS) forecasts from IBES, $f_{hijt}$, where $h$ represents the forecast horizon, such as six months ahead of the fiscal year end. 
+The index $i$ denotes the analyst making the forecast. 
+The index $j$ refers to the firm being forecasted, and $t$ indicates the forecast time, for example, January 2005.
+
+Forecast dispersion is calculated as:
+\begin{equation}
+    Fdis_{hjt} = \frac{\sigma_{hjt}}{|\bar{f}_{hjt}|} = \frac{\sqrt{\frac{1}{N_{hjt}-1} \sum_{i=1}^{N_{hjt}} (f_{hijt} - \bar{f}_{hjt})^2}}{|\bar{f}_{hjt}|}
+\end{equation}
+where $N_{hjt}$ is the number of analysts making forecasts for the given forecast horizon $h$, firm $j$, and time $t$, and $\bar{f}_{hjt}$ is the median of the forecasts across analysts for the given $h$, $j$, and $t$.
+
+Forecast errors are calculated as:
+\begin{equation}
+    FE_{hjt} = \left| \log \left( \frac{e_{jy(t)}}{\bar{f}_{hjt}} \right) \right|
+\end{equation}
+where $e_{jy(t)}$ is the realized earnings per share for firm $j$ and year $y(t)$ of time $t$. For instance, $y(t)$ for $t=(\text{2004 January})$ is 2004.
+
+
+
+\subsection{Descriptive Statistics}
+Table \ref{tab:desc_stats_a} presents descriptive statistics for key variables in Dataset A.
+The mean realized EPS is 71.4 Japanese yen, while the mean median estimated EPS is 89.8 Japanese yen.
+The median estimated EPS tends to be larger than realized EPS across the percentile distribution,
+except that the 5th percentile estimated EPS (minus 9.8 Japanese yen) is much larger than the 5th percentile realized EPS (minus 94.2 Japanese yen).
+It is also evident that the standard deviation of the estimated EPS is smaller than the standard deviation of the realized EPS. 
+This is consistent with a simple model of imperfect information where analysts form expectations about future earnings of each firm under imperfect information. 
+A simple Bayes rule implies that, suppose the prior mean of analysts is around the unconditional mean or median, then the analyst forecast distribution tends to be more compressed around the prior mean because an analyst's forecast is the weighted average of the prior mean and a signal which might indicate a true value of earnings of each firm in the future.  
+In fact, a similar fact about the standard deviation of forecasts has been found in other contexts like sales forecasts of business managers. 
+Business managers tend to forecast relatively smaller sales growth compared to actually realized sales growth [@denardi2022; @bloom2021].
+On average, each firm-year observation has 4.8 analyst estimates.
+Table 1 also shows how many analysts cover each firm. 
+The median number of analysts covering each firm is 4.8 and the median is 3 in the sample. 
+The 95th percentile of the number of estimates is 15, and the smallest by definition in this IBES data includes firms that have only one analyst covering. 
+For the analysis below, we focus on firms that have at least two analysts covering each firm.
+We can also see the constructed variables including forecast dispersion and forecast error, which are computed in two ways here: one taking the log of the ratio of forecast and then realized EPS, and the other which is the percentage deviation of realized earnings from the estimated earnings. Both forecast dispersion and forecast error have clear cross-sectional variation. 
+Comparing the log and the percentage deviation measures of forecast error, we have relatively similar variation. 
+Below, we are going to study and investigate the drivers of these forecast dispersion and forecast error measures.
+
+
+
+\begin{table}[htbp]
+\centering
+\resizebox{1.\textwidth}{!}{
+\begin{threeparttable}
+\input{table/desc_stats_a.tex}
+\begin{tablenotes}
+\footnotesize
+\item
+\end{tablenotes}
+\end{threeparttable}
+}
+\caption{Descriptive Statistics: Dataset A}
+\label{tab:desc_stats_a}
+\end{table}
+
+Table \ref{tab:desc_stats_b} shows descriptive statistics for Dataset B, which includes financial variables.
+Table 2 shows descriptive statistics for key variables in Dataset B, which includes financial information taken from the DBJ data. 
+First, we can compare realized EPS, median EPS, number of estimates across those two datasets. 
+It's clear that whether or not we can match with the DBJ data doesn't materially change the characteristics of the underlying datasets. 
+This is also true for forecast dispersion and forecast error measures created across the two datasets. 
+Since financial information is included in Dataset B, we can gauge the summary statistics in terms of market capitalization and sales. 
+For instance, the mean sales is 420 billion Japanese yen and the mean market capitalization is 270 billion Japanese yen.
+
+\begin{table}[htbp]
+\centering
+\resizebox{1.0\textwidth}{!}{
+\begin{threeparttable}
+\input{table/desc_stats_b.tex}
+\begin{tablenotes}
+\footnotesize
+\item
+\end{tablenotes}
+\end{threeparttable}
+}
+\caption{Descriptive Statistics: Dataset B}
+\label{tab:desc_stats_b}
+\end{table}
+
+
+\subsection{Timing and Horizon of Forecasts}
+Figure \ref{fig:numfirm_h} shows that the majority of analyst forecasts start to be released 10 months ahead of the fiscal year end.
+By the time we reach 8 months ahead of the fiscal year, there are almost 100\% of forecasts available for all the firms in the dataset, and after that, there is a stable number of firms that have forecasts available until the end of the fiscal year.
+
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=1.0\textwidth]{graph/numfirm_h.png}
+\caption{Number of Firms with Forecasts by Forecast Horizon}
+\label{fig:numfirm_h}
+\end{figure}
+
+As the forecast horizon approaches the fiscal year end, forecast dispersion (Figure \ref{fig:fdis_h}) and forecast errors (Figure \ref{fig:fe_h}) tend to decrease, indicating that analysts become better informed over time.
+Since the sample size for Horizon 11 and 12 is small, we need to be cautious in interpreting those results. For those horizons where forecast dispersion is the highest in Horizon 12 and the lowest in Horizon 11, the forecast error is relatively small for Horizon 11 and 12. Looking at the forecast dispersion on the left panel of Figure 3, the degree of dispersion and hence disagreement among analysts peaks around Horizon 9 and then starts to decline. But the speed of such convergence of forecasts among analysts seems to be slower than the pace of getting better informed, as seen in the right panel of Figure 4, where we can show that the size of forecast error decreases substantially from Horizon 8 towards the end of the fiscal year, which is Horizon 0.
+
+\begin{figure}[htbp]
+\centering
+\label{fig:fdis_h}
+\includegraphics[width=0.45\textwidth]{graph/meanfdis_h.png}
+\label{fig:fe_h}
+\includegraphics[width=0.45\textwidth]{graph/meanFElog_h.png}
+\caption{Forecast Dispersion and Errors over Forecast Horizon}
+\label{fig:fdis_fe_h}
+\end{figure}
+
+
+
+
+\bigskip
+\section{Empirical Findings}
+\subsection{Number of Forecasts and Firm Characteristics}
+Figure \ref{fig:sd_actual_numest} shows that the standard deviation of the number of estimates is higher for firms with higher realized EPS.
+The left panel of Figure 4 shows the correlation between the number of estimators and the standard deviation of forecasts. As the panel shows, the standard deviation of EPS forecasts is larger when the number of forecasters is large. To explore more, the right panel of Figure 4 shows the relationship between the realized level of EPS for each firm and the number of forecasters covering that firm. As seen in the panel, that relationship is positive - the larger the realized level of earnings (EPS), the more the number of coverage analysts. The positive relationship between the standard deviation of analyst forecasts of EPS and the number of estimators in the left panel might simply be a mechanical result of the positive correlation between the level of realized EPS and the number of estimators, as seen in the right panel.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.45\textwidth]{graph/StdevNumest.png}
+\includegraphics[width=0.45\textwidth]{graph/ActualNmest.png}
+\caption{Standard Deviation of Forecasts and Realized EPS by Number of Estimates}
+\label{fig:sd_actual_numest}
+\end{figure}
+
+
+The left panel of Figure \ref{fig:fdis_fe_numest} shows the relationship between the coefficient of variation of the forecasts by analysts and the number of analysts. This way we control for the fact that the standard deviation might be larger just because the level of realized EPS is larger. As can be seen from the panel, the relationship between the coefficient of variation of the forecasts and the number of estimators is negative. We view this as evidence that disagreement among analysts is smaller if we have more analysts. To further explore this, the right panel of Figure \ref{fig:fdis_fe_numest} plots the relationship between forecast error and the number of estimates. The panel shows a negative relationship between the size of the forecast error made by the consensus forecast and the number of estimators. Combining the left and right panels, we may interpret that when more analysts cover each firm, there are information spillovers across analysts, making the analysts covering the same firm more informed and learning from each other. We can also say that this agreement reflects the degree of accuracy of information held by analysts. Therefore, the more analysts that cover each firm, we might expect that they learn from each other, information spills over, and the accuracy of information held by the analysts increases, leading to a lower degree of disagreement. To dig deeper into this point, we investigate the drivers of forecast dispersion and forecast error utilizing the panel feature of the dataset and the available control variables and fixed effects.
+
+Figure \ref{fig:fdis_fe_numest} indicates potential information spillover, as forecast dispersion and errors decrease with more analysts covering a firm.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.45\textwidth]{graph/FdisCVnumest.png}
+\includegraphics[width=0.45\textwidth]{graph/FElogNumest.png}
+\caption{Forecast Dispersion and Errors by Number of Estimates}
+\label{fig:fdis_fe_numest}
+\end{figure}
+
+
+
+
+\subsection{Forecast dispersion is smaller for firms with more analysts}
+
+Figure \ref{fig:fdis_fe_numest} shows a negative association between measures of forecast dispersion and errors and the number of analysts.
+Here we go beyond these bivariate correlations and control for many other factors in Table \ref{tab:reg_fdis}.
+It presents regression results for the determinants of forecast dispersion, including the number of analysts, firm size, firm age, earnings volatility, and stock price volatility.
+Column (1) reports the result of regressing a measure of forecast dispersion, confirming the statistical significance of the relationship in Panel A of Figure \ref{fig:fdis_fe_numest}.
+Column (1) shows that a one unit increase in the number of estimates (NUMEST) is associated with a 0.014 decrease in forecast dispersion, suggesting that having more estimates reduces forecast dispersion.
+Column (2) adds year and firm dummies, and column (3) adds the standard other controls such as firm size and firm age.
+For firms with more analysts covering and reporting earnings forecasts, those analysts still make smaller forecast dispersion.
+With more controls, column (3) indicates that a one unit increase in the mean standard deviation of actual values ($SD_ACTUAL$) is associated with a 0.119 increase in forecast dispersion, a larger magnitude compared to column (1).
+
+\begin{table}[htbp]
+\centering
+\resizebox{1.0\textwidth}{!}{
+\begin{threeparttable}
+\input{table/reg_T01.tex}
+\begin{tablenotes}
+\footnotesize
+\end{tablenotes}
+\end{threeparttable}
+}
+\caption{Regression Results for Forecast Dispersion}
+\label{tab:reg_fdis}
+\end{table}
+
+Column (4) considers earnings volatility and stock price volatility as drivers of forecast dispersion.
+These variables are natural candidates for drivers of forecast dispersion because it takes time to get better informed if one learns about volatile outcomes.
+As predicted, both earnings and stock price volatility are positively correlated with forecast dispersion, indicating analysts disagree more about firms that have more volatile earnings growth and stock prices.
+The volatility of earnings growth is more directly related than stock price volatility. This result shows the robustness of the role of the number of analysts in driving the size of forecast dispersion.
+So far, we include all firms that have at least two analysts covering and reporting earnings forecasts.
+In column (5), we exclude firms that have only two analysts covering and reporting earnings forecasts, and the result is robust to doing so.
+Column (5) shows that a one unit increase in mean stock volatility (stockvol) is associated with a 0.129 increase in forecast dispersion, a similar magnitude as seen in column (4) for all firms.
+Column (6) excludes firms that have fewer than 6 analysts covering and reporting earnings forecasts.
+The results remain robust with such sample selection, and it is confirmed that the number of analysts drives the size of forecast dispersion.
+In summary, the regression table examines factors associated with forecast dispersion, finding that having more estimates reduces dispersion, while greater variability in actual values and higher stock volatility are linked to more dispersed forecasts. The results are generally consistent across sub-sample specifications.
+
+
+
+
+
+\subsection{Forecast errors are smaller for firms with more analysts}
+Table \ref{tab:reg_fe} shows regression results for the determinants of forecast errors, including the number of analysts, firm size, firm age, earnings volatility, and stock price volatility.
+Column (1) reports the result of regressing a measure of forecast error, confirming the statistical significance of the relationship in Panel B of Figure \ref{fig:fdis_fe_numest}.
+Column (1) shows that a one unit increase in the number of estimates (NUMEST) is associated with a 0.011 decrease in forecast error, suggesting that having more estimates reduces forecast error.
+Column (2) adds year and firm dummies, and column (3) adds the standard other controls such as firm size and firm age.
+For firms with more analysts covering and reporting earnings forecasts, those analysts still make smaller forecast errors.
+With more controls, column (3) indicates that a one unit increase in the mean standard deviation of actual values ($SD_ACTUAL$) is associated with a 0.043 increase in forecast error, a larger magnitude compared to column (1).
+
+\begin{table}[htbp]
+\centering
+\resizebox{1.0\textwidth}{!}{
+\begin{threeparttable}
+\input{table/reg_T02.tex}
+\begin{tablenotes}
+\footnotesize
+\end{tablenotes}
+\end{threeparttable}
+}
+\caption{Regression Results for Forecast Errors}
+\label{tab:reg_fe}
+\end{table}
+
+
+Column (4) considers earnings volatility and stock price volatility as drivers of forecast error.
+As predicted, both earnings and stock price volatility are positively correlated with forecast error, indicating analysts are less accurate about firms that have more volatile earnings growth and stock prices.
+The volatility of earnings growth is more directly related than stock price volatility. This result shows the robustness of the role of the number of analysts in driving the size of forecast error.
+So far, we include all firms that have at least two analysts covering and reporting earnings forecasts.
+In column (5), we exclude firms that have only two analysts covering and reporting earnings forecasts, and the result is robust to doing so.
+Column (5) shows that a one unit increase in mean stock volatility (stockvol) is associated with a 0.035 increase in forecast error, a similar magnitude as seen in column (4) for all firms.
+Column (6) excludes firms that have fewer than 6 analysts covering and reporting earnings forecasts.
+The results remain robust with such sample selection, and it is confirmed that the number of analysts drives the size of forecast error.
+In summary, the regression table examines factors associated with forecast error, finding that having more estimates reduces error, while greater variability in actual values and higher stock volatility are linked to larger forecast errors. The results are generally consistent across sub-sample specifications.
+
+
+
+
+
+\subsection{Firms with higher earnings per share have more analysts}
+
+We have shown that the number of analysts is a driver of forecast dispersion and forecast error measures.
+Here, we explore what then drives the number of analysts for each firm.
+Column (1) reports the result of regressing the number of analysts on the realized EPS, confirming the statistical significance of the relationship in Figure \ref{fig:sd_actual_numest}.
+Column (2) adds year and firm dummies, and column (3) adds the standard other controls such as firm size and firm age.
+As seen in column (3), larger and older firms have more analysts, and the positive relationship between the number of analysts and the realized EPS remains significant.
+These three factors together with year and firm fixed effects yield a high $R^2$ of 0.844, which is mainly due to a high $R^2$ of 0.828 in column (2).
+
+\begin{table}[htbp]
+\centering
+\resizebox{1.0\textwidth}{!}{
+\begin{threeparttable}
+\input{table/reg_T03.tex}
+\begin{tablenotes}
+\footnotesize
+\end{tablenotes}
+\end{threeparttable}
+}
+\caption{Regression Results for Number of Estimators}
+\label{tab:reg_numest}
+\end{table}
+
+
+Column (4) considers earnings volatility and stock price volatility as drivers of the number of analysts.
+The results thus far are about all firms that have at least two analysts covering and reporting earnings forecasts.
+In column (5), we exclude firms that have only two analysts covering and reporting earnings forecasts, and the result is robust to doing so.
+Column (5) shows that a one unit increase in realized EPS is associated with a 0.079 increase in the number of analysts.
+Column (6) excludes firms that have fewer than 6 analysts covering and reporting earnings forecasts, showing that a one unit increase in realized EPS is associated with a 0.104 increase in the number of analysts, which is larger than the magnitude found in column (4) and column (5).
+In summary, the regression table examines factors associated with the number of coverage analysts for each firm, and we find that there are more analysts for large and old firms, but it is also the case that realized EPS is a robust driver of the number of analysts across sub-sample specifications.
+
+
+
+\bigskip
+\section{Time-Series Index}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=1.0\textwidth]{graph/meanfdiscv_m.png}
+\caption{Forecast Dispersion Index}
+\label{fig:fdis_full}
+\end{figure}
+
+We construct time-series indices of forecast dispersion and errors by taking the annual mean for each firm and then the cross-sectional mean for each year.
+Figure \ref{fig:fdis_full} plots the forecast dispersion index for the full sample period. Several spikes are evident, potentially corresponding to events that heightened uncertainty.
+The most recent spike is the Covid-19 pandemic peak in March 2020 (TBC).
+The second highest peaks in the figure are from March 2003 when the Iraq War began, to May 2003 when the Japanese Government bailed out Resona Bank.
+One may argue that these peaks are times when uncertainty facing firms in terms of their performance, such as earnings, is high.
+To explore this point, Figure \ref{fig:fdis_epu} compares the forecast dispersion index with the Economic Policy Uncertainty (EPU) index for Japan, showing a positive correlation.
+As seen in Figure \ref{fig:fdis_epu}, both the forecast dispersion index and EPU show some similarities in capturing times when uncertainty about firm performance appears to be high.
+
+
+
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=1.0\textwidth]{graph/mean_Fdis_CV_JPNEPUINDXM.png}
+\caption{Forecast Dispersion and Economic Policy Uncertainty in Japan}
+\label{fig:fdis_epu}
+\end{figure}
+
+It is commonly understood that uncertainty is countercyclical in that it is higher when business conditions are worse, such as during recessions or when stock prices are falling.
+To see whether the index created from IBES data has countercyclical features, Figure \ref{fig:fdis_nikkei} shows a relationship between the forecast dispersion index and the Nikkei 225 stock market index.
+It can be seen that there are times when the forecast dispersion index rises and the Nikkei 225 stock market index falls, albeit with difficulty seeing it through with trends in the Nikkei 225 index.
+While the jumps in the uncertainty index appear when firms face greater uncertainty about future earnings, it is also worthwhile to study how those jumps are clustered within some periods of time because
+the frequency of those jumps seems to vary across time.
+Comparing the first half of the period in Figure 8 to the second half of the periods, it is clear that there are more jumps in the first half of the period than the second half. Hence, Figure 9 takes the moving average of the forecast dispersion index and forecast errors index as an effort to gauge the medium-run fluctuations of those uncertainty indexes. As one can see in Figure 9, it is evident that the overall level of uncertainty in the first half of the period is higher than that for the second half. As in the right panel of Figure 9, this pattern is more pronounced if you look at the forecast error index, where the level of uncertainty in the medium run is highest around the Asian financial crisis and the Japanese banking crisis before the uncertainty level fell sharply after the bailout of Resona Bank. Therefore, we argue that both the high-frequency time series of the uncertainty index with spikes and the moving average of such an uncertainty index are useful for researchers and policymakers to monitor and think about the level of uncertainty in real time.
+The moving average of the forecast dispersion index and forecast error index (Figure \ref{fig:fdis_fe_ma}) provide a gauge of uncertainty over the medium term.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=1.0\textwidth]{graph/mean_Fdis_CV_NIKKEI225.png}
+\caption{Forecast Dispersion and Nikkei 225 Index}
+\label{fig:fdis_nikkei}
+\end{figure}
+
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.45\textwidth]{graph/mean_Fdis_CV_MA.png}
+\includegraphics[width=0.45\textwidth]{graph/mean_FE_pct_MA.png}
+\caption{Moving Average of Forecast Dispersion and Errors}
+\label{fig:fdis_fe_ma}
+\end{figure}
+
+
+Finally, Table \ref{tab:cross_corr} reports the cross-correlations among the uncertainty indices and macroeconomic variables. The forecast dispersion and error indices are positively correlated with the EPU index and negatively correlated with the Nikkei 225 index.
+
+\begin{table}[htbp]
+\centering
+\resizebox{1.0\textwidth}{!}{
+\begin{threeparttable}
+\input{table/cross_correlation.tex}
+\begin{tablenotes}
+\footnotesize
+\item
+\end{tablenotes}
+\end{threeparttable}
+}
+\caption{Cross-Correlations}
+\label{tab:cross_corr}
+\end{table}
+
+
+
+\newpage
+\section{Conclusion}
+In conclusion, our paper sheds new light on the properties and determinants of analyst forecast dispersion and errors, and their links to macroeconomic uncertainty. By constructing novel indices and exploring their cross-sectional and time-series patterns, we contribute to the growing literature on the role of expectations and uncertainty in the economy. Our findings suggest that analyst forecasts provide a valuable window into the evolution of firm-level uncertainty over time, with potentially important implications for researchers, policymakers, and market participants.
+Our paper also points to several avenues for future research. One natural extension would be to examine the effects of forecast dispersion and errors on firm-level outcomes such as investment, employment, and asset prices. Another interesting question is whether the patterns we document for Japan also hold in other countries, particularly emerging markets where analyst coverage may be more limited. Finally, future work could explore the implications of our findings for the design of monetary and fiscal policies that aim to stabilize the economy in the face of uncertainty shocks.
+
+
+
+
+
+
+\end{document}

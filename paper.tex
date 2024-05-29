@@ -92,25 +92,6 @@ where $e_{jy(t)}$ is the realized earnings per share for firm $j$ and year $y(t)
 
 
 \subsection{Descriptive Statistics}
-Table \ref{tab:desc_stats_a} presents descriptive statistics for key variables in Dataset A.
-The mean realized EPS is 71.4 Japanese yen, while the mean median estimated EPS is 89.8 Japanese yen.
-The median estimated EPS tends to be larger than realized EPS across the percentile distribution,
-except that the 5th percentile estimated EPS (minus 9.8 Japanese yen) is much larger than the 5th percentile realized EPS (minus 94.2 Japanese yen).
-It is also evident that the standard deviation of the estimated EPS is smaller than the standard deviation of the realized EPS. 
-This is consistent with a simple model of imperfect information where analysts form expectations about future earnings of each firm under imperfect information. 
-A simple Bayes rule implies that, suppose the prior mean of analysts is around the unconditional mean or median, then the analyst forecast distribution tends to be more compressed around the prior mean because an analyst's forecast is the weighted average of the prior mean and a signal which might indicate a true value of earnings of each firm in the future.  
-In fact, a similar fact about the standard deviation of forecasts has been found in other contexts like sales forecasts of business managers. 
-Business managers tend to forecast relatively smaller sales growth compared to actually realized sales growth [@denardi2022; @bloom2021].
-On average, each firm-year observation has 4.8 analyst estimates.
-Table 1 also shows how many analysts cover each firm. 
-The median number of analysts covering each firm is 4.8 and the median is 3 in the sample. 
-The 95th percentile of the number of estimates is 15, and the smallest by definition in this IBES data includes firms that have only one analyst covering. 
-For the analysis below, we focus on firms that have at least two analysts covering each firm.
-We can also see the constructed variables including forecast dispersion and forecast error, which are computed in two ways here: one taking the log of the ratio of forecast and then realized EPS, and the other which is the percentage deviation of realized earnings from the estimated earnings. Both forecast dispersion and forecast error have clear cross-sectional variation. 
-Comparing the log and the percentage deviation measures of forecast error, we have relatively similar variation. 
-Below, we are going to study and investigate the drivers of these forecast dispersion and forecast error measures.
-
-
 
 \begin{table}[htbp]
 \centering
@@ -127,13 +108,25 @@ Below, we are going to study and investigate the drivers of these forecast dispe
 \label{tab:desc_stats_a}
 \end{table}
 
-Table \ref{tab:desc_stats_b} shows descriptive statistics for Dataset B, which includes financial variables.
-Table 2 shows descriptive statistics for key variables in Dataset B, which includes financial information taken from the DBJ data. 
-First, we can compare realized EPS, median EPS, number of estimates across those two datasets. 
-It's clear that whether or not we can match with the DBJ data doesn't materially change the characteristics of the underlying datasets. 
-This is also true for forecast dispersion and forecast error measures created across the two datasets. 
-Since financial information is included in Dataset B, we can gauge the summary statistics in terms of market capitalization and sales. 
-For instance, the mean sales is 420 billion Japanese yen and the mean market capitalization is 270 billion Japanese yen.
+Table \ref{tab:desc_stats_a} presents descriptive statistics for key variables in Dataset A.
+The mean realized EPS is 71.4 Japanese yen, while the mean median estimated EPS is 89.8 Japanese yen.
+While the median estimated EPS tends to be higher than realized EPS across the percentile distribution,
+the 5th percentile estimated EPS (minus 9.8 Japanese yen) is exceptionally much higher than the 5th percentile realized EPS (minus 94.2 Japanese yen).
+This is related to the fact that the standard deviation of the estimated EPS is smaller than the standard deviation of the realized EPS.
+The fact that the standard deviation of the estimated EPS is smaller than the standard deviation of the realized EPS is consistent with 
+a simple model wherein analysts form expectations about future earnings of each firm under imperfect information.
+A simple Bayes rule implies that, suppose the prior mean of analysts is around the unconditional mean or median, then the analyst forecast distribution 
+tends to be more compressed around the prior mean because an analyst's forecast is the weighted average of the prior mean and a signal 
+which is around a true value of earnings of each firm in the future. 
+In fact, a similar fact about the standard deviation of forecasts has been found in other contexts like sales forecasts of business managers. 
+The distribution of business managers about their own sales growth tend to be more compressed than that of 
+realized sales growth.\footnote{See Bloom st al. (2021) and Barrero (2022) for more details.}
+
+Table 1 also shows how many analysts cover each firm. 
+The mean number of analysts covering each firm is 4.8 and the median is 3 in the sample. 
+The 95th percentile of the number of estimates is 15, and the smallest by definition in this IBES data includes firms that have only one analyst covering.
+For the analysis below, we focus on firms that have at least two analysts covering each firm and the results are robust to this restriction as become clear 
+later.\footnote{The main results remain unchanged when we focus on the sample of firms with at least five analysts or ten analysts covering each firm.}
 
 \begin{table}[htbp]
 \centering
@@ -151,9 +144,34 @@ For instance, the mean sales is 420 billion Japanese yen and the mean market cap
 \end{table}
 
 
+Table 2 shows descriptive statistics for key variables in Dataset B, which includes financial information taken from the DBJ data. 
+First, we can compare realized EPS, median EPS, number of estimates across two datasets A and B. 
+It's clear that whether or not we can match with the DBJ data doesn't materially change the characteristics of the underlying datasets. 
+This is also true for forecast dispersion and forecast error measures created across the two datasets. 
+Since financial information is included in Dataset B, we can obtain the summary statistics in terms of market capitalization and sales for Dataset B. 
+For instance, the mean sales is 420 billion Japanese yen and the mean market capitalization is 270 billion Japanese yen.
+
+
+
+
+Table \ref{tab:desc_stats_b} shows descriptive statistics for Dataset B, which includes financial variables.
+Table 2 shows descriptive statistics for key variables in Dataset B, which includes financial information taken from the DBJ data. 
+First, we can compare realized EPS, median EPS, number of estimates across those two datasets. 
+It's clear that whether or not we can match with the DBJ data doesn't materially change the characteristics of the underlying datasets. 
+This is also true for forecast dispersion and forecast error measures created across the two datasets. 
+Since financial information is included in Dataset B, we can gauge the summary statistics in terms of market capitalization and sales. 
+For instance, the mean sales is 420 billion Japanese yen and the mean market capitalization is 270 billion Japanese yen.
+
+
+\bigskip
+\section{Empirical Findings}
 \subsection{Timing and Horizon of Forecasts}
+The constructed data includes analysts' forecasts of EPS for each firm's accounting year, with each forecast being made at monthly frequency, ranging from Horizon 0 to Horizon 12 and even further.
+Horizon 0 corresponds to the fiscal year end and analysts still can report their forecasts for the fiscal year end and they do indeed.
+In this subsection, we therefore look at how forecasts are released and the relationship between the timing of the forecasts and the accuracy and dispersion of the forecasts.
 Figure \ref{fig:numfirm_h} shows that the majority of analyst forecasts start to be released 10 months ahead of the fiscal year end.
-By the time we reach 8 months ahead of the fiscal year, there are almost 100\% of forecasts available for all the firms in the dataset, and after that, there is a stable number of firms that have forecasts available until the end of the fiscal year.
+By the time we reach 9 months ahead of the fiscal year, there are almost 100\% of forecasts available for all the firms in the dataset, 
+and after that, there is a stable number of firms that have forecasts available until the end of the fiscal year.
 
 
 \begin{figure}[htbp]
@@ -163,27 +181,35 @@ By the time we reach 8 months ahead of the fiscal year, there are almost 100\% o
 \label{fig:numfirm_h}
 \end{figure}
 
-As the forecast horizon approaches the fiscal year end, forecast dispersion (Figure \ref{fig:fdis_h}) and forecast errors (Figure \ref{fig:fe_h}) tend to decrease, indicating that analysts become better informed over time.
-Since the sample size for Horizon 11 and 12 is small, we need to be cautious in interpreting those results. For those horizons where forecast dispersion is the highest in Horizon 12 and the lowest in Horizon 11, the forecast error is relatively small for Horizon 11 and 12. Looking at the forecast dispersion on the left panel of Figure 3, the degree of dispersion and hence disagreement among analysts peaks around Horizon 9 and then starts to decline. But the speed of such convergence of forecasts among analysts seems to be slower than the pace of getting better informed, as seen in the right panel of Figure 4, where we can show that the size of forecast error decreases substantially from Horizon 8 towards the end of the fiscal year, which is Horizon 0.
+Focusing on the relationship between the timing of the forecasts and the accuracy and dispersion of the forecasts for Horizon 0 to Horizon 8 or 9 when most of the forecasts are released, 
+Figure \ref{fig:fdis_fe_h} shows the mean forecast dispersion and forecast errors for each horizon tend to decrease as the forecast horizon approaches the fiscal year end.
+Looking at the forecast dispersion on the left panel of Figure \ref{fig:fdis_fe_h}, 
+the degree of dispersion and hence disagreement among analysts peaks around Horizon 9 and then starts to decline. 
+But the speed of such convergence of forecasts among analysts seems to be slower than the pace of getting better informed, 
+as seen in the right panel of Figure \ref{fig:fdis_fe_h}, where we can see that the size of forecast error decreases substantially from Horizon 8 towards the end of the fiscal year, which is Horizon 0.
 
 \begin{figure}[htbp]
 \centering
-\label{fig:fdis_h}
-\includegraphics[width=0.45\textwidth]{graph/meanfdis_h.png}
-\label{fig:fe_h}
-\includegraphics[width=0.45\textwidth]{graph/meanFElog_h.png}
+\includegraphics[width=0.47\textwidth]{graph/meanfdis_h.png}
+\includegraphics[width=0.47\textwidth]{graph/meanFElog_h.png}
 \caption{Forecast Dispersion and Errors over Forecast Horizon}
 \label{fig:fdis_fe_h}
 \end{figure}
 
 
 
+\subsection{Number of Forecasts}
 
-\bigskip
-\section{Empirical Findings}
-\subsection{Number of Forecasts and Firm Characteristics}
-Figure \ref{fig:sd_actual_numest} shows that the standard deviation of the number of estimates is higher for firms with higher realized EPS.
-The left panel of Figure 4 shows the correlation between the number of estimators and the standard deviation of forecasts. As the panel shows, the standard deviation of EPS forecasts is larger when the number of forecasters is large. To explore more, the right panel of Figure 4 shows the relationship between the realized level of EPS for each firm and the number of forecasters covering that firm. As seen in the panel, that relationship is positive - the larger the realized level of earnings (EPS), the more the number of coverage analysts. The positive relationship between the standard deviation of analyst forecasts of EPS and the number of estimators in the left panel might simply be a mechanical result of the positive correlation between the level of realized EPS and the number of estimators, as seen in the right panel.
+In the previous section, we have seen that the dispersion of analysts' forecasts decreases as the forecast horizon approaches the fiscal year end. 
+We also have seen that the accuracy of analysts' forecasts increases as the forecast horizon approaches the fiscal year end.
+In stead of looking at the within-firm variation of the dispersion and accuracy of forecasts, this section explores the between-firm variation of the dispersion and accuracy of forecasts, 
+by looking at various firm characteristics including the number of analysts, firm size, and firm age.
+
+The left panel of Figure \ref{fig:sd_actual_numest} shows the relationship between the number of estimators and the standard deviation of forecasts. 
+As the panel shows, the standard deviation of EPS forecasts is larger when the number of forecasters is large. 
+To explore more this, the right panel of Figure \ref{fig:sd_actual_numest} shows the relationship between the realized level of EPS for each firm and the number of forecasters covering that firm. 
+As seen in the panel, that relationship is positive - the larger the realized level of earnings (EPS), the more the number of coverage analysts. 
+The positive relationship between the standard deviation of analyst forecasts of EPS and the number of estimators in the left panel might simply be a mechanical result of the positive correlation between the level of realized EPS and the number of estimators, as seen in the right panel.
 
 \begin{figure}[htbp]
 \centering
@@ -193,10 +219,19 @@ The left panel of Figure 4 shows the correlation between the number of estimator
 \label{fig:sd_actual_numest}
 \end{figure}
 
+To explore the relationship between the number of analysts and the accuracy and dispersion of the forecasts, 
+Figure \ref{fig:fdis_fe_numest} shows the relationship between the coefficient of variation of the forecasts by analysts and the number of analysts. 
+This way we control for the fact that the standard deviation might be larger just because the level of realized EPS is larger. 
+As can be seen from the panel, the relationship between the coefficient of variation of the forecasts and the number of estimators is negative. 
+To further explore this, the right panel of Figure \ref{fig:fdis_fe_numest} plots the relationship between forecast error and the number of estimates. 
+The panel shows a negative relationship between the size of the forecast error made by the consensus forecast and the number of estimators. 
 
-The left panel of Figure \ref{fig:fdis_fe_numest} shows the relationship between the coefficient of variation of the forecasts by analysts and the number of analysts. This way we control for the fact that the standard deviation might be larger just because the level of realized EPS is larger. As can be seen from the panel, the relationship between the coefficient of variation of the forecasts and the number of estimators is negative. We view this as evidence that disagreement among analysts is smaller if we have more analysts. To further explore this, the right panel of Figure \ref{fig:fdis_fe_numest} plots the relationship between forecast error and the number of estimates. The panel shows a negative relationship between the size of the forecast error made by the consensus forecast and the number of estimators. Combining the left and right panels, we may interpret that when more analysts cover each firm, there are information spillovers across analysts, making the analysts covering the same firm more informed and learning from each other. We can also say that this agreement reflects the degree of accuracy of information held by analysts. Therefore, the more analysts that cover each firm, we might expect that they learn from each other, information spills over, and the accuracy of information held by the analysts increases, leading to a lower degree of disagreement. To dig deeper into this point, we investigate the drivers of forecast dispersion and forecast error utilizing the panel feature of the dataset and the available control variables and fixed effects.
+Combining the left and right panels, one can think of the mean forecast EPS is the result of aggregating each individual analyst's forecasts. 
+As long as each analyst is partially informed about the firm's future earnings, the more analysts that cover each firm, the more informed the average forecast is and the less dispersed the forecasts are.
+It is not necessary for this story to be true though, there may be information spillovers across analysts.
+Therefore, the more analysts that cover each firm, we might expect that they learn from each other, information spills over, and the accuracy of information held by the analysts increases, leading to a lower degree of disagreement. 
+To dig deeper into this point, we investigate the drivers of forecast dispersion and forecast error utilizing the panel feature of the dataset and the available control variables and fixed effects.
 
-Figure \ref{fig:fdis_fe_numest} indicates potential information spillover, as forecast dispersion and errors decrease with more analysts covering a firm.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.45\textwidth]{graph/FdisCVnumest.png}
@@ -210,16 +245,15 @@ Figure \ref{fig:fdis_fe_numest} indicates potential information spillover, as fo
 
 \subsection{Forecast dispersion is smaller for firms with more analysts}
 
-Figure \ref{fig:fdis_fe_numest} shows a negative association between measures of forecast dispersion and errors and the number of analysts.
-Here we go beyond these bivariate correlations and control for many other factors in Table \ref{tab:reg_fdis}.
+The previous section considered the bivariate correlations; though, this section take this further by adding more variables and controlling for other factors in Table \ref{tab:reg_fdis}.
 It presents regression results for the determinants of forecast dispersion, including the number of analysts, firm size, firm age, earnings volatility, and stock price volatility.
-Column (1) reports the result of regressing a measure of forecast dispersion, confirming the statistical significance of the relationship in Panel A of Figure \ref{fig:fdis_fe_numest}.
-Column (1) shows that a one unit increase in the number of estimates (NUMEST) is associated with a 0.014 decrease in forecast dispersion, suggesting that having more estimates reduces forecast dispersion.
+Column (1) reports the result of regressing a measure of forecast dispersion, confirming the statistical significance of the relationship in the right panel of Figure \ref{fig:fdis_fe_numest}.
+Column (1) shows that a one unit increase in the number of estimates (NUMEST) is associated with a 0.014 decrease in forecast dispersion, suggesting that having more analysts reduces forecast dispersion.
 Column (2) adds year and firm dummies, and column (3) adds the standard other controls such as firm size and firm age.
 For firms with more analysts covering and reporting earnings forecasts, those analysts still make smaller forecast dispersion.
-With more controls, column (3) indicates that a one unit increase in the mean standard deviation of actual values ($SD_ACTUAL$) is associated with a 0.119 increase in forecast dispersion, a larger magnitude compared to column (1).
 
 \begin{table}[htbp]
+
 \centering
 \resizebox{1.0\textwidth}{!}{
 \begin{threeparttable}
@@ -235,11 +269,16 @@ With more controls, column (3) indicates that a one unit increase in the mean st
 
 Column (4) considers earnings volatility and stock price volatility as drivers of forecast dispersion.
 These variables are natural candidates for drivers of forecast dispersion because it takes time to get better informed if one learns about volatile outcomes.
+It may be less direct, however, the volatile stock returns may imply that the volatility of the earnings is higher.
 As predicted, both earnings and stock price volatility are positively correlated with forecast dispersion, indicating analysts disagree more about firms that have more volatile earnings growth and stock prices.
-The volatility of earnings growth is more directly related than stock price volatility. This result shows the robustness of the role of the number of analysts in driving the size of forecast dispersion.
+Column (4) indicates that a one unit increase in the standard deviation of realized EPS is associated with a 0.035 increase in forecast dispersion.
+It also shows that a one unit increase in the standard deviation of stock returns is associated with a 0.132 increase in forecast dispersion.
+The main result in terms of the number of analysts remains robust and its magnitude is stonger in that adding more analysts to a firm reduces forecast dispersion by 0.118, 
+while the mean value of the dependent variable is 0.2 as in Table \ref{tab:desc_stats_b}.
+
 So far, we include all firms that have at least two analysts covering and reporting earnings forecasts.
 In column (5), we exclude firms that have only two analysts covering and reporting earnings forecasts, and the result is robust to doing so.
-Column (5) shows that a one unit increase in mean stock volatility (stockvol) is associated with a 0.129 increase in forecast dispersion, a similar magnitude as seen in column (4) for all firms.
+Column (5) shows that a one unit increase in the number of analysts is associated with a 0.131 decrease in forecast dispersion, a similar magnitude as seen in column (4) for all firms.
 Column (6) excludes firms that have fewer than 6 analysts covering and reporting earnings forecasts.
 The results remain robust with such sample selection, and it is confirmed that the number of analysts drives the size of forecast dispersion.
 In summary, the regression table examines factors associated with forecast dispersion, finding that having more estimates reduces dispersion, while greater variability in actual values and higher stock volatility are linked to more dispersed forecasts. The results are generally consistent across sub-sample specifications.
@@ -249,12 +288,13 @@ In summary, the regression table examines factors associated with forecast dispe
 
 
 \subsection{Forecast errors are smaller for firms with more analysts}
+
 Table \ref{tab:reg_fe} shows regression results for the determinants of forecast errors, including the number of analysts, firm size, firm age, earnings volatility, and stock price volatility.
-Column (1) reports the result of regressing a measure of forecast error, confirming the statistical significance of the relationship in Panel B of Figure \ref{fig:fdis_fe_numest}.
+Column (1) reports the result of regressing a measure of forecast error, confirming the statistical significance of the relationship in the right panel of Figure \ref{fig:fdis_fe_numest}.
 Column (1) shows that a one unit increase in the number of estimates (NUMEST) is associated with a 0.011 decrease in forecast error, suggesting that having more estimates reduces forecast error.
 Column (2) adds year and firm dummies, and column (3) adds the standard other controls such as firm size and firm age.
 For firms with more analysts covering and reporting earnings forecasts, those analysts still make smaller forecast errors.
-With more controls, column (3) indicates that a one unit increase in the mean standard deviation of actual values ($SD_ACTUAL$) is associated with a 0.043 increase in forecast error, a larger magnitude compared to column (1).
+With more controls, column (3) indicates that adding an analyst to a firm is associated with a 0.141 decrease in forecast error, a larger magnitude compared to column (1).
 
 \begin{table}[htbp]
 \centering
@@ -270,13 +310,11 @@ With more controls, column (3) indicates that a one unit increase in the mean st
 \label{tab:reg_fe}
 \end{table}
 
-
 Column (4) considers earnings volatility and stock price volatility as drivers of forecast error.
 As predicted, both earnings and stock price volatility are positively correlated with forecast error, indicating analysts are less accurate about firms that have more volatile earnings growth and stock prices.
-The volatility of earnings growth is more directly related than stock price volatility. This result shows the robustness of the role of the number of analysts in driving the size of forecast error.
-So far, we include all firms that have at least two analysts covering and reporting earnings forecasts.
-In column (5), we exclude firms that have only two analysts covering and reporting earnings forecasts, and the result is robust to doing so.
-Column (5) shows that a one unit increase in mean stock volatility (stockvol) is associated with a 0.035 increase in forecast error, a similar magnitude as seen in column (4) for all firms.
+This result shows the robustness of the role of the number of analysts in driving the size of forecast error.
+Relative to these results where we include all firms that have at least two analysts covering and reporting earnings forecasts, 
+column (5) exclude firms that have only two analysts covering and reporting earnings forecasts, and the result is robust to doing so.
 Column (6) excludes firms that have fewer than 6 analysts covering and reporting earnings forecasts.
 The results remain robust with such sample selection, and it is confirmed that the number of analysts drives the size of forecast error.
 In summary, the regression table examines factors associated with forecast error, finding that having more estimates reduces error, while greater variability in actual values and higher stock volatility are linked to larger forecast errors. The results are generally consistent across sub-sample specifications.

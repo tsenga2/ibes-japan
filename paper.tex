@@ -1,6 +1,6 @@
 \documentclass[12pt, a4paper]{article}
 
-\usepackage[margin=1.3in]{geometry}
+\usepackage[margin=1.5in]{geometry}
 \usepackage{graphicx}
 \usepackage{natbib}
 \usepackage{amsmath}
@@ -13,7 +13,7 @@
 
 \title{Forecast Dispersion and Forecast Errors across Firms and Time}
 \author{Hatsu Kawabata \and Tatsuro Senga}
-\date{May 15, 2024}
+\date{May 29, 2024}
 
 \begin{document}
 
@@ -24,19 +24,60 @@ This paper investigates the properties of analyst forecast dispersion and foreca
 \end{abstract}
 
 \section{Introduction}
-Expectations play a central role in macroeconomics and finance, influencing the decisions of households, businesses, and policymakers. One important source of expectations data is earnings forecasts made by financial analysts. By aggregating and analyzing these forecasts, we can gain insights into the degree of uncertainty and disagreement in the economy.
+Expectations play a central role in macroeconomics and finance, influencing the decisions of households, businesses, and policymakers. 
+Yet, empirical studies testing the theoretical implications and estabilishing the stylized facts on expecations and more fundamentally 
+on how economic agents take and use information are still limited, primarily because of the limited availablity of data to use.
+In this paper, we study a relatively underused dataset on market analysts forecast of earnings of firms called IBES (Institutional Brokers' Estimayte System).
+to show both cross-sectional and time-series patterns in analyst forecasts.
+Focusinng on Japanese publicly traded firms, we use data taken from IBES and merge with NikkeiNeeds and DBJ data to construct time-series indices 
+of forecast dispersion and errors, which provide a real-time measure of micro-level uncertainty.
+We then explore the relationships between these indices and various firm characteristics, as well as macroeconomic and financial market indicators.
 
-This paper examines the properties and determinants of analyst forecast dispersion and forecast errors, using a comprehensive dataset of Japanese firms from 1985 to 2023. We construct novel time-series indices of forecast dispersion and errors, which provide a real-time measure of firm-level uncertainty. We then explore the relationships between these indices and various firm characteristics, as well as macroeconomic and financial market indicators.
+This paper examines the properties and determinants of analyst forecast dispersion and forecast errors, 
+using a comprehensive dataset of Japanese firms from 1985 to 2023. 
+We construct novel time-series indices of forecast dispersion and errors, 
+which provide a real-time measure of firm-level uncertainty. 
+We then explore the relationships between these indices and various firm characteristics, 
+as well as macroeconomic and financial market indicators.
 
-Our analysis reveals several key findings. First, forecast dispersion and errors are positively correlated, indicating that greater disagreement among analysts is associated with larger forecast errors. This suggests that dispersion reflects genuine uncertainty rather than differences in opinion or information.
+Our analysis reveals several key findings. 
+First, forecast dispersion and errors are positively correlated, indicating that greater disagreement among analysts
+ is associated with larger forecast errors. 
+ This suggests that dispersion reflects genuine uncertainty rather than differences in opinion or information.
 
-Second, the number of analysts covering a firm plays an important role in shaping forecast properties. Dispersion and errors tend to be smaller for firms with more analyst coverage, even after controlling for other factors such as firm size, age, and volatility. We interpret this as evidence of information spillovers and learning among analysts.
+Second, the number of analysts covering a firm plays an important role in shaping forecast properties. 
+Dispersion and errors tend to be smaller for firms with more analyst coverage, 
+even after controlling for other factors such as firm size, age, and volatility. 
+We interpret this as evidence of information spillovers and learning among analysts.
 
-Third, the forecast dispersion and error indices exhibit significant time-series variation, with spikes corresponding to major economic and geopolitical events. The indices are positively correlated with other popular uncertainty measures like the Economic Policy Uncertainty (EPU) index for Japan. They also display a clear countercyclical pattern, rising during downturns and periods of stock market weakness.
+Third, the forecast dispersion and error indices exhibit significant time-series variation, 
+with spikes corresponding to major economic and geopolitical events. 
+The indices are positively correlated with other popular uncertainty measures like 
+the Economic Policy Uncertainty (EPU) index for Japan. They also display a clear countercyclical pattern, 
+rising during downturns and periods of stock market weakness.
 
-Overall, our findings highlight the usefulness of analyst forecast data in measuring and understanding the evolution of firm-level uncertainty over time. The indices we develop can serve as a valuable tool for policymakers and market participants to monitor uncertainty in real time. 
+Overall, our findings highlight the usefulness of analyst forecast data 
+in measuring and understanding the evolution of firm-level uncertainty over time. 
+The indices we develop can serve as a valuable tool for policymakers and market participants
+ to monitor uncertainty in real time. 
 
-Our paper contributes to several strands of literature. We add to the growing body of work on cross-sectional and time-series patterns in analyst forecasts (e.g. [@hong2000bad; @bali2016stock; @chen2021analyst]). In particular, our study is one of the first to examine forecast dispersion and errors in a non-US context over an extended time period. We also contribute to research on the role of uncertainty in macroeconomic fluctuations (e.g. [@bloom2009impact; @kozeniauskas2018what; @coibion2018rule]). Our indices provide a novel firm-level perspective that complements the macroeconomic uncertainty measures commonly used in the literature.
+Our paper contributes to several strands of literature.
+
+Firstly, we contribute to the empirical literature on uncertainty. Several proxies have been de-
+veloped within the literature, ranging from the volatility of GDP or stock prices to disagreement
+and forecast errors in survey data, as uncertainty is difficult to identify. For example, Leahy and
+Whited (1996) construct a measure of uncertainty from the volatility of stock returns for indi-
+vidual firms. Guiso and Parigi (1999) use survey data on demand forecasts by Italian firms to
+infer the level of uncertainty facing these individual firms.8 Bond et al. (2005) consider several
+Guiso and Parigi (1999) use 3-point probability distributions from the Bank of Italy Survey of Investment
+in manufacturing (SIM) and Morikawa (2013) uses 2-point distributions from his original survey and finds that
+uncertainty related to the tax system and trade policy matters for firms’ capital investment and overseas activities.
+In this paper, I use data on earnings forecasts by individual analysts as in
+Bond et al. (2005); however, I examine not only the average cross-sectional distribution but
+also the cyclical changes of this uncertainty measure. Bachmann et al. (2013) use survey data
+from the IFO Business Climate Survey, which asks forecasters about their own future prospects
+rather than about macroeconomic variables such as GDP, to extensively study various measures
+of uncertainty. I also use forecast disagreement to measure uncertainty
 
 The rest of the paper is organized as follows. Section 2 describes the data and methodology. Section 3 presents our empirical findings on the cross-sectional determinants of forecast dispersion and errors. Section 4 introduces the time-series indices and explores their properties and correlations. Finally, Section 5 concludes.
 
@@ -359,51 +400,64 @@ In summary, the regression table examines factors associated with the number of 
 \bigskip
 \section{Time-Series Index}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=1.0\textwidth]{graph/meanfdiscv_m.png}
-\caption{Forecast Dispersion Index}
-\label{fig:fdis_full}
-\end{figure}
 
-We construct time-series indices of forecast dispersion and errors by taking the annual mean for each firm and then the cross-sectional mean for each year.
-Figure \ref{fig:fdis_full} plots the forecast dispersion index for the full sample period. Several spikes are evident, potentially corresponding to events that heightened uncertainty.
-The most recent spike is the Covid-19 pandemic peak in March 2020 (TBC).
+In preceeding sections, we have seen various characteristics of micro data based on IBES, NikkeiNeeds, and DBJ database.
+The measure of forecast dispersion and forecast error appear to refelct the level of imperfect information about a firm's future earnings.
+In particular, the measure of forecast dispersion is a type of second momemnt proxy in terms of the level of imperfect informaiton, which can be 
+thought of as the level of uncertainty about a firm's future earnings.
+While it is a measure of such from the perspective of market analysts, not from the perspective of business managers, 
+this section exploits the cross-sectional and time-series patterns of the data to construct time series indices of forecast dispersion and errors.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.0\textwidth]{graph/meanfdiscv_m.png}
+    \caption{Forecast Dispersion Index}
+    \label{fig:fdis_full}
+    \end{figure}
+
+Figure \ref{fig:fdis_full} plots the forecast dispersion index, which is the cross-sectional mean of the forecast dispersion measure for each year.
+We construct it by taking the annual mean of forecast dispersion for each firm and then the cross-sectional mean for each year.
+As seen in Figure \ref{fig:fdis_full}, there are several spikes that are potentially corresponding to events that heightened uncertainty.
+The most recent spike is the Covid-19 pandemic peak in March 2020.
 The second highest peaks in the figure are from March 2003 when the Iraq War began, to May 2003 when the Japanese Government bailed out Resona Bank.
 One may argue that these peaks are times when uncertainty facing firms in terms of their performance, such as earnings, is high.
-To explore this point, Figure \ref{fig:fdis_epu} compares the forecast dispersion index with the Economic Policy Uncertainty (EPU) index for Japan, showing a positive correlation.
+Other spikes seen in the figure include when the Bank of Japan cut the discoun rate to 1.00 percent in 1994, 
+during times when there was a banking crises in Japan, on top of the Asian financial crisis around 1998, 
+the 9/11 terorist attack, the global financial crisis periods in 2007 through 2009, aftermath of Tohoku earthquake in 2013.
+
+Here, we compare the forecast dispersion index with the Economic Policy Uncertainty (EPU) index for Japan, showing a positive correlation.
 As seen in Figure \ref{fig:fdis_epu}, both the forecast dispersion index and EPU show some similarities in capturing times when uncertainty about firm performance appears to be high.
 
 
-
-
 \begin{figure}[htbp]
-\centering
-\includegraphics[width=1.0\textwidth]{graph/mean_Fdis_CV_JPNEPUINDXM.png}
-\caption{Forecast Dispersion and Economic Policy Uncertainty in Japan}
-\label{fig:fdis_epu}
-\end{figure}
+    \centering
+    \includegraphics[width=1.0\textwidth]{graph/mean_Fdis_CV_JPNEPUINDXM.png}
+    \caption{Forecast Dispersion and Economic Policy Uncertainty in Japan}
+    \label{fig:fdis_epu}
+    \end{figure}
+   
 
 It is commonly understood that uncertainty is countercyclical in that it is higher when business conditions are worse, such as during recessions or when stock prices are falling.
 To see whether the index created from IBES data has countercyclical features, Figure \ref{fig:fdis_nikkei} shows a relationship between the forecast dispersion index and the Nikkei 225 stock market index.
 It can be seen that there are times when the forecast dispersion index rises and the Nikkei 225 stock market index falls, albeit with difficulty seeing it through with trends in the Nikkei 225 index.
 While the jumps in the uncertainty index appear when firms face greater uncertainty about future earnings, it is also worthwhile to study how those jumps are clustered within some periods of time because
 the frequency of those jumps seems to vary across time.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.0\textwidth]{graph/mean_Fdis_CV_NIKKEI225.png}
+    \caption{Forecast Dispersion and Nikkei 225 Index}
+    \label{fig:fdis_nikkei}
+    \end{figure}
+
+    
 Comparing the first half of the period in Figure 8 to the second half of the periods, it is clear that there are more jumps in the first half of the period than the second half. Hence, Figure 9 takes the moving average of the forecast dispersion index and forecast errors index as an effort to gauge the medium-run fluctuations of those uncertainty indexes. As one can see in Figure 9, it is evident that the overall level of uncertainty in the first half of the period is higher than that for the second half. As in the right panel of Figure 9, this pattern is more pronounced if you look at the forecast error index, where the level of uncertainty in the medium run is highest around the Asian financial crisis and the Japanese banking crisis before the uncertainty level fell sharply after the bailout of Resona Bank. Therefore, we argue that both the high-frequency time series of the uncertainty index with spikes and the moving average of such an uncertainty index are useful for researchers and policymakers to monitor and think about the level of uncertainty in real time.
 The moving average of the forecast dispersion index and forecast error index (Figure \ref{fig:fdis_fe_ma}) provide a gauge of uncertainty over the medium term.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=1.0\textwidth]{graph/mean_Fdis_CV_NIKKEI225.png}
-\caption{Forecast Dispersion and Nikkei 225 Index}
-\label{fig:fdis_nikkei}
-\end{figure}
-
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.45\textwidth]{graph/mean_Fdis_CV_MA.png}
-\includegraphics[width=0.45\textwidth]{graph/mean_FE_pct_MA.png}
+\includegraphics[width=0.485\textwidth]{graph/mean_Fdis_CV_MA.png}
+\includegraphics[width=0.485\textwidth]{graph/mean_FE_pct_MA.png}
 \caption{Moving Average of Forecast Dispersion and Errors}
 \label{fig:fdis_fe_ma}
 \end{figure}
@@ -426,9 +480,15 @@ Finally, Table \ref{tab:cross_corr} reports the cross-correlations among the unc
 \label{tab:cross_corr}
 \end{table}
 
+In summary, we construct the timeseries indices of forecast dispersion and forecast errors, and 
+examine their basic feactures in capturing times when uncertainy is high and comapare them with the EPU index and the Nikkei 225 index.
+We show that the forecast dispersion index and the forecast error index are positively correlated with the EPU index 
+and negatively correlated with the Nikkei 225 index.
+We argue that these indices are not only relevant for the level of uncertainy srrounding business perfromance in general but also 
+useful for researchers and policymakers to monitor and think about the level of uncertainty in real time, as it is relatively easy 
+to construct these indices as demonstrated in the paper.
 
 
-\newpage
 \section{Conclusion}
 In conclusion, our paper sheds new light on the properties and determinants of analyst forecast dispersion and errors, and their links to macroeconomic uncertainty. By constructing novel indices and exploring their cross-sectional and time-series patterns, we contribute to the growing literature on the role of expectations and uncertainty in the economy. Our findings suggest that analyst forecasts provide a valuable window into the evolution of firm-level uncertainty over time, with potentially important implications for researchers, policymakers, and market participants.
 Our paper also points to several avenues for future research. One natural extension would be to examine the effects of forecast dispersion and errors on firm-level outcomes such as investment, employment, and asset prices. Another interesting question is whether the patterns we document for Japan also hold in other countries, particularly emerging markets where analyst coverage may be more limited. Finally, future work could explore the implications of our findings for the design of monetary and fiscal policies that aim to stabilize the economy in the face of uncertainty shocks.

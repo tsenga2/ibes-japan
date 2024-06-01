@@ -1,0 +1,479 @@
+\documentclass[aspectratio=169]{beamer}
+\usepackage{amsmath}
+\usepackage{comment}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+
+\title[LSE PRESS \hspace{25mm} \insertframenumber/\inserttotalframenumber]{Disagreement and Forecast Errors \\ across Firms and Time}
+
+\author[Advanced Macroeconomics]{Hatsu Kawabata \& Tatsuro Senga}
+
+\begin{document}
+\maketitle
+
+
+\begin{frame}{Introduction}
+\begin{itemize}
+    \item Analysts' earnings forecasts provide valuable insights into the expectations and uncertainty surrounding firms' financial performance.
+    \item Forecast dispersion, measured as the disagreement among analysts, can serve as a proxy for uncertainty about a firm's future earnings.
+    \item This study explores the properties of forecast dispersion and forecast errors using a comprehensive dataset of Japanese firms from 1985 to 2023.
+    \item We investigate the determinants of forecast dispersion and errors, as well as their relationships with macroeconomic and financial market indicators.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Information and Macroeconomic Fluctuations}
+\begin{itemize}
+    \item Information plays a crucial role in shaping macroeconomic fluctuations and the business cycle.
+    \item The dispersion of beliefs and expectations among economic agents can influence their decision-making and aggregate outcomes.
+    \item Analysts' earnings forecasts provide a unique lens to study the role of information and uncertainty in the economy.
+    \item By examining the properties of forecast dispersion and errors across firms and over time, we can gain insights into the relationship between firm-level uncertainty and macroeconomic fluctuations.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Overview}
+\begin{itemize}
+    \item We construct a comprehensive dataset by combining earnings forecasts from IBES, stock prices from NikkeiNeeds, and financial information from the Development Bank of Japan.
+    \item Our dataset covers a wide range of Japanese firms from 1985 to 2023, allowing us to study the evolution of forecast dispersion and errors over time.
+    \item We define key variables such as forecast dispersion, forecast errors, and the number of analysts covering each firm.
+    \item Our analysis reveals several interesting patterns:
+    \begin{itemize}
+        \item Forecast dispersion and errors are positively correlated, indicating that greater disagreement among analysts is associated with larger forecast errors.
+        \item Forecast dispersion tends to be smaller for larger firms with more analyst coverage.
+        \item The number of analysts covering a firm is positively related to its size, age, and stock volatility.
+    \end{itemize}
+    \item We also construct time-series indices of forecast dispersion and errors and explore their relationships with macroeconomic and financial market indicators.
+    \item Our findings suggest that forecast dispersion and errors are countercyclical and negatively correlated with stock market performance.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{IBES (Institutional Brokers' Estimate System) Data }
+  \begin{itemize}
+    \item IBES Data is a database that collects and compiles financial analyst earnings estimates and recommendations
+    \item Provided by Refinitiv (available on WRDS)
+    \item Provides a comprehensive view of analyst expectations and consensus estimates:
+    \begin{itemize}
+      \item Earnings per share (EPS) estimates
+      \item Buy/hold/sell recommendations
+      \item Price targets
+    \end{itemize}
+    \item Covers a wide range of companies across various industries and regions
+    \item Data is available at different frequencies (e.g., monthly, quarterly, annual)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Dataset construction}
+
+\begin{enumerate}
+    \item IBES: EPS forecasts by analysts
+    \item NikkeiNeeds: Index and individual stock prices
+    \item DBJ (Development Bank of Japan): Financial information
+\end{enumerate}
+
+\vspace{1em}
+Dataset A
+\begin{itemize}
+    \item IBES and NikkeiNeeds
+    \item consensus forecasts, forecast dispersion, forecast errors, stock prices and volatility
+    \item Monthly (1985 January --- 2023 June)
+\end{itemize}
+
+\vspace{0.5em}
+Dataset B
+\begin{itemize}
+    \item IBES, NikkeiNeeds, and DBJ
+    \item Dataset A plus financial information of individual firms
+    \item Yearly  (1985 --- 2023)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{IBES being matched with NikkeiNeeds}
+    \centering
+    \includegraphics[width=1.0\linewidth]{graph/merge_nikkei_counts.png}
+\end{frame}
+
+
+
+\begin{frame}{Variable construction 1}
+
+EPS (earnings per share) forecast: $f_{hijt}$
+\vspace{1em}
+\begin{itemize}
+    \item forecast horizon $h$ (e.g. six months ahead of Fiscal Year End)
+    \item forecast by analyst $i$
+    \item forecast about firm $j$
+    \item forecast time $t$ (e.g. 2005 January) 
+\end{itemize}
+
+\vspace{1em}
+
+\end{frame}
+
+
+\begin{frame}{Variable construction 2}
+
+Forecast dispersion:
+
+\begin{equation}
+Fdis_{hjt} = \frac{\sigma_{hjt}}{| \bar{f}_{hjt} |} = \frac{\sqrt{\frac{1}{N_{hjt}-1} \sum_{i=1}^{N_{hjt}} (f_{hijt} - \bar{f}_{hjt})^2}}{| \bar{f}_{hjt} |}
+\end{equation}
+
+\vspace{2em}
+--- $N_{hjt}$ is the number of analysts who made forecasts for the given forecast horizon $h$, firm $j$, and time $t$.
+
+\vspace{1em}
+--- $\bar{f}_{hjt}$ is the median of the forecasts across analysts for the given $h$, $j$, and $t$.
+
+\end{frame}
+
+
+\begin{frame}{Variable construction 3}
+
+Forecast errors:
+
+\begin{equation}
+FE_{hjt} = | log(\frac{e_{jy(t)}}{\bar{f}_{hjt}}) |
+\end{equation}
+
+\vspace{1em}
+--- $N_{hjt}$ is the number of analysts who made forecasts for the given forecast horizon $h$, firm $j$, and time $t$.
+
+\vspace{1em}
+--- $e_{jy(t)}$ is the realised earnings per share for the firm $j$ and year $y(t)$ of time $t$. For instance, $y(t)$ for $t=(2004 \text{~January})$ would be $2004$.
+
+
+\end{frame}
+
+
+
+\begin{frame}{Toyota}
+    
+\end{frame}
+
+\begin{frame}{Uniqlo}
+    
+\end{frame}
+
+\begin{frame}{Rakuten}
+    
+\end{frame}
+
+\begin{frame}{Descriptive Statistics: Panel A}
+
+\begin{table}
+\centering
+\input{table/desc_stats_a.tex}
+\label{tab:desc_stats}
+\end{table}
+
+\end{frame}
+
+\begin{frame}{Descriptive Statistics: Panel B}
+\small
+\begin{table}
+\centering
+\input{table/desc_stats_b.tex}
+\label{tab:desc_stats}
+\end{table}
+
+\begin{itemize}
+\item The mean sales is 420 billion Yen. The mean market cap. is 270 billion yen.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Forecasts start to be released 10 month ahead}
+
+      \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{graph/numfirm_h.png}
+        \caption{Forecasts start to be released 10 month ahead}
+        \label{fig:figure1}
+      \end{figure}
+      
+\end{frame}
+
+\begin{frame}{Forecasters get better informed gradually}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{graph/meanfdis_h.png}
+        \caption{Forecast Dispersion}
+        \label{fig:figure1}
+      \end{figure}
+    \end{column}
+    
+    \begin{column}{0.5\textwidth}
+      \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{graph/meanFElog_h.png}
+        \caption{Forecast Errors}
+        \label{fig:figure2}
+      \end{figure}
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+\begin{comment}
+    
+\begin{frame}
+	\frametitle{Forecast Dispersion (winsorized at 1\%)}
+	\centering
+	\includegraphics[width=1.0\linewidth]{graph/meanfdiscv_m_winsor.png}
+
+\end{frame}
+\end{comment}
+
+
+\begin{frame}{Number of forecasts matter?}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{graph/StdevNumest.png}
+        \caption{Standard Deviation of Forecasts}
+        \label{fig:figure1}
+      \end{figure}
+    \end{column}
+    
+    \begin{column}{0.5\textwidth}
+      \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{graph/ActualNmest.png}
+        \caption{Realised EPS}
+        \label{fig:figure2}
+      \end{figure}
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+\begin{frame}{Information Spillover }
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{graph/FdisCVnumest.png}
+        \caption{Forecast Dispersion}
+        \label{fig:figure1}
+      \end{figure}
+    \end{column}
+    
+    \begin{column}{0.5\textwidth}
+      \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{graph/FElogNumest.png}
+        \caption{Forecast Errors}
+        \label{fig:figure2}
+      \end{figure}
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+
+\begin{frame}{Forecast dispersion }
+
+\begin{table}[!htbp]
+\centering
+\resizebox{\linewidth}{!}{ % begin threeparttable here
+\begin{threeparttable} % tabular file input, then table notes
+\input{table/reg_T01.tex}
+\begin{tablenotes}
+%\scriptsize 
+\footnotesize
+\item 
+\end{tablenotes}
+\end{threeparttable}
+} % end threeparttable here
+\end{table}
+
+\end{frame}
+
+
+\begin{frame}{Forecast errors }
+
+\begin{table}[!htbp]
+\centering
+\resizebox{\linewidth}{!}{ % begin threeparttable here
+\begin{threeparttable} % tabular file input, then table notes
+\input{table/reg_T02.tex}
+\begin{tablenotes}
+%\scriptsize 
+\footnotesize
+\item 
+\end{tablenotes}
+\end{threeparttable}
+} % end threeparttable here
+\end{table}
+
+\end{frame}
+
+
+\begin{frame}{Number of estimators }
+
+\begin{table}[!htbp]
+\centering
+\resizebox{\linewidth}{!}{ % begin threeparttable here
+\begin{threeparttable} % tabular file input, then table notes
+\input{table/reg_T03.tex}
+\begin{tablenotes}
+%\scriptsize 
+\footnotesize
+\item 
+\end{tablenotes}
+\end{threeparttable}
+} % end threeparttable here
+\end{table}
+
+\end{frame}
+
+
+\begin{frame}{Key Findings so far}
+\begin{enumerate}
+
+    \item Forecast dispersion and forecast errors covary.
+    \item Major forecasts start 10 month ahead of the end of year.
+    \item Smaller forecast dispersion for larger firms with more analysts covering.
+    \item Large, old, and more volatile stocks have more coverage analysts. 
+
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Time Series Index}
+
+\begin{itemize}
+    \item Forecast dispersion: $Fdis_{hjt}$
+    \item Forecast errors: $FE_{hjt}$
+\end{itemize}
+
+\vspace{1em}
+We take the annual mean for each firm $j$ in each year $t$. We then take the cross sectional mean for each year $t$. 
+
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Forecast Dispersion (full sample)}
+	\centering
+	\includegraphics[width=1.0\linewidth]{graph/meanfdiscv_m.png}
+
+\end{frame}
+
+
+
+\begin{frame}
+	\frametitle{Economic Policy Uncertainty in Japan}
+	\centering
+	\includegraphics[width=1.0\linewidth]{graph/mean_Fdis_CV_JPNEPUINDXM.png}
+
+\end{frame}
+
+\begin{comment}
+\begin{frame}
+	\frametitle{Industrial Production (total manufacturing)}
+	\centering
+	\includegraphics[width=1.0\linewidth]{graph/mean_Fdis_CV_JPNPRMNTO01GYSAM.png} 
+
+\end{frame}
+\end{comment}
+
+
+\begin{frame}
+	\frametitle{Nikkei 225 (monthly average)}
+	\centering
+	\includegraphics[width=1.0\linewidth]{graph/mean_Fdis_CV_NIKKEI225.png}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Moving average Fdis}
+	\centering
+	\includegraphics[width=1.0\linewidth]{graph/mean_Fdis_CV_MA.png}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Moving average FE}
+	\centering
+	\includegraphics[width=1.0\linewidth]{graph/mean_FE_pct_MA.png}
+\end{frame}
+
+
+\begin{frame}[fragile]
+	\frametitle{Cross Correlation}
+	\begin{table}[!htbp]
+	\centering
+	\resizebox{\linewidth}{!}{
+	\begin{threeparttable}
+	\input{table/cross_correlation.tex}
+	\begin{tablenotes}
+	\footnotesize
+	\item
+	\end{tablenotes}
+	\end{threeparttable}
+	}
+	\end{table}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Uncertainty rises when stock price falls}
+
+\footnotesize
+\begin{table}[!htbp]
+\centering
+\resizebox{\linewidth}{!}{
+\begin{threeparttable}
+\input{table/reg_ts_1.tex}
+\begin{tablenotes}
+\footnotesize
+\item
+\end{tablenotes}
+\end{threeparttable}
+}
+\end{table}
+\begin{table}[!htbp]
+\centering
+\resizebox{\linewidth}{!}{
+\begin{threeparttable}
+\input{table/reg_ts_2.tex}
+\begin{tablenotes}
+\footnotesize
+\item
+\end{tablenotes}
+\end{threeparttable}
+}
+\end{table}
+\end{frame}
+
+
+\begin{frame}{Summary}
+
+\begin{itemize}
+    \item Time series index based on forecast dispersion and forecast errors are correlated with other popular uncertainty measures like EPU (economic policy uncertainty index).
+    \item Each spike appears to be related to an event that created uncertainty.
+    \item Moving average is also informative to gauge the level of uncertainty in the medium run. 
+    \item They are all countercyclical. For instance, they are negatively correlated with industrial production index and Nikkei stock index.
+    
+\end{itemize}
+    
+\end{frame}
+    
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

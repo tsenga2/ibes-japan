@@ -72,6 +72,7 @@ drop flag
 gen count_merge_3 = (_merge_nikkei == 3)
 gen count_merge_2 = (_merge_nikkei == 2)
 
+preserve
 * Collapse data to get the number of each type per period
 collapse (sum) count_merge_3 count_merge_2, by(period)
 
@@ -83,10 +84,61 @@ local step = ceil(`num_periods'/10)  // Display approximately one label every 10
 
 gen count_sum = count_merge_2 + count_merge_3
 
+<<<<<<< HEAD
 twoway (bar count_sum period, barwidth(0.4) color(maroon)) ///
        (bar count_merge_3 period, barwidth(0.4) color(navy)), ///
        ytitle("") ///
        graphregion(color(white)) plotregion(color(white)) legend(off)
 
 graph export "$mypath/graph/merge_nikkei_counts.png", as(png) replace
+=======
+graph export "$mypath/graph/merge_nikkei_counts.png", as(png) replace
+
+restore
+
+keep if _merge_nikkei==3
+
+
+label variable ACTUAL "\textbf{Realised EPS}"
+label variable MEDEST "\textbf{Median Estimated EPS}"
+label variable MEANEST "\textbf{Mean Estimated EPS}"
+label variable NUMEST "\textbf{Number of Estimates}"
+label variable Fdis_CV "\textbf{Forecast Dispersion}"
+label variable FE_log "\textbf{Forecast Error Log}"
+label variable FE_pct "\textbf{Forecast Error Percentage}"
+
+preserve
+winsor2 ACTUAL MEDEST NUMEST Fdis_CV FE_log FE_pct, replace cuts(1 99) 
+
+estpost sum ACTUAL MEDEST NUMEST Fdis_CV FE_log FE_pct, d
+est store all
+esttab all ///
+using $mypath/table/desc_stats_a.tex, replace ///
+legend noabbrev style(tex) ///
+cells("mean(fmt(1)) sd(fmt(1)) p5(fmt(1)) p25(fmt(1)) p50(fmt(1)) p75(fmt(1)) p95(fmt(1))") ///
+lines parentheses ///
+label nonumber noobs nogaps ///
+stats(N, fmt(%9.0fc) labels("Observations"))
+restore
+
+
+merge m:1 OFTIC eym using "$mypath/renketsu1.dta", generate(_merge_renketsu)
+keep if _merge_renketsu == 3
+
+winsor2 ACTUAL MEDEST NUMEST Fdis_CV FE_log FE_pct marketcapitalizationbasedonissue sale, replace cuts(1 99) 
+
+label variable marketcapitalizationbasedonissue "\textbf{Market Capitalization (YEN)}"
+label variable sale "\textbf{Sales (Mil. YEN)}"
+
+estpost sum ACTUAL MEDEST NUMEST Fdis_CV FE_log FE_pct marketcapitalizationbasedonissue sale, d
+est store all
+esttab all ///
+using $mypath/table/desc_stats_b.tex, replace ///
+legend noabbrev style(tex) ///
+cells("mean(fmt(1)) sd(fmt(1)) p5(fmt(1)) p25(fmt(1)) p50(fmt(1)) p75(fmt(1)) p95(fmt(1))") ///
+lines parentheses ///
+label nonumber noobs nogaps ///
+stats(N, fmt(%9.0fc) labels("Observations"))
+
+>>>>>>> 35260a74db089c077386a40c1df99c1e83dbec67
 

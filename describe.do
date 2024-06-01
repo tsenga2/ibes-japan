@@ -81,11 +81,12 @@ local num_periods = _N
 local step = ceil(`num_periods'/10)  // Display approximately one label every 10 periods
 
 
-graph bar (asis) count_merge_3 count_merge_2, over(period) stack ///
-bar(1, bcolor(navy)) ///
-bar(2, bcolor(maroon)) ///
-ytitle("") ///
-graphregion(color(white)) plotregion(color(white)) legend(off)
+gen count_sum = count_merge_2 + count_merge_3
 
-graph export "$mypath/graph/merge_nikkei_counts.png", as(png)
+twoway (bar count_sum period, barwidth(0.4) color(maroon)) ///
+       (bar count_merge_3 period, barwidth(0.4) color(navy)), ///
+       ytitle("") ///
+       graphregion(color(white)) plotregion(color(white)) legend(off)
+
+graph export "$mypath/graph/merge_nikkei_counts.png", as(png) replace
 

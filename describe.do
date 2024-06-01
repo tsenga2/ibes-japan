@@ -84,14 +84,11 @@ local step = ceil(`num_periods'/10)  // Display approximately one label every 10
 
 gen count_sum = count_merge_2 + count_merge_3
 
-<<<<<<< HEAD
 twoway (bar count_sum period, barwidth(0.4) color(maroon)) ///
        (bar count_merge_3 period, barwidth(0.4) color(navy)), ///
        ytitle("") ///
        graphregion(color(white)) plotregion(color(white)) legend(off)
 
-graph export "$mypath/graph/merge_nikkei_counts.png", as(png) replace
-=======
 graph export "$mypath/graph/merge_nikkei_counts.png", as(png) replace
 
 restore
@@ -139,6 +136,4 @@ cells("mean(fmt(1)) sd(fmt(1)) p5(fmt(1)) p25(fmt(1)) p50(fmt(1)) p75(fmt(1)) p9
 lines parentheses ///
 label nonumber noobs nogaps ///
 stats(N, fmt(%9.0fc) labels("Observations"))
-
->>>>>>> 35260a74db089c077386a40c1df99c1e83dbec67
 

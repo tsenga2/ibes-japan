@@ -9,8 +9,11 @@
 \usepackage{threeparttable}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage{natbib}
-\bibliographystyle{aer}
+\usepackage{doi}
+\usepackage{CJKutf8}
 
 \title{Forecast Dispersion and Forecast Errors across Firms and Time}
 \author{Hatsu Kawabata \and Tatsuro Senga}
@@ -18,7 +21,7 @@
 
 
 \begin{document}
-
+\begin{CJK}{UTF8}{min}
 \maketitle
 
 \begin{abstract}
@@ -56,7 +59,15 @@ in measuring and understanding the evolution of firm-level uncertainty over time
 The indices we develop can serve as a valuable tool for policymakers and market participants
 to monitor uncertainty in real time. By capturing the degree of disagreement and inaccuracy in analyst expectations, these indices provide a novel, forward-looking measure of the uncertainty surrounding firms' fundamentals and prospects. As such, they complement existing macro uncertainty measures and can help improve our understanding of the links between micro-level information frictions and aggregate outcomes.
 
-Our paper contributes to several strands of literature.
+The dispersion of analyst forecasts has been a topic of interest in the accounting literature, while 
+economic analysis is yet still scarce.\footnote{See \citet{NaraNoma2024} for a recent survey and related papers referenced therein.}
+The dispersion of analyst forecasts has been a topic of interest in various studies, which have examined its relationship with analyst coverage, accuracy and optimism of analyst forecasts, corporate disclosure, and firm characteristics. \citet{Diether2002}, \citet{Ciccone2003}, and \citet{LiuNatarajan2012} have used the dispersion of analyst forecasts as a proxy for future uncertainty and found that it is positively correlated with analyst coverage, indicating that higher future uncertainty leads to greater analyst coverage.
+Regarding firm size, \citet{LangLundholm1996}, \citet{Diether2002}, and \citet{LiuNatarajan2012} have shown that larger firms tend to have lower dispersion of analyst forecasts. \citet{Clement2003} report that the disclosure of management forecasts leads to a reduction in the dispersion of analyst forecasts, suggesting that management forecasts have the effect of reducing future uncertainty.
+\citet{LangLundholm1996} also find that firms with higher disclosure ratings have lower dispersion of analyst forecasts. Their study reveals that firms with higher standard deviation of ROE, higher correlation between stock prices and earnings, larger earnings surprises, and more recent forecast revisions tend to have higher dispersion of analyst forecasts.
+Furthermore, \citet{Brown1987a} state that there is a positive relationship between the accuracy of analyst forecasts and the dispersion of analyst forecasts.
+In the Japanese context, while there is no study that directly analyzes the relationship between the dispersion of analyst forecasts and the value relevance of analyst forecasts, \citet{Obinata2010} has examined the relationship between the dispersion of analyst forecasts and the value relevance of actual earnings.
+
+Our paper contributes to several strands of literature in Economics.
 Firstly, we add to the research on the properties and determinants of analyst forecasts. 
 Prior studies have documented cross-sectional dispersion in analyst forecasts and its relationship with other firm characteristics \cite{hong2000bad, brennan2000investment, diether2002differences}, 
 as well as the time-series dynamics of aggregate forecast dispersion \cite{yu2011analyst, barinov2022firm}. 
@@ -500,6 +511,7 @@ Our paper also points to several avenues for future research. One natural extens
 
 
 
+\bibliographystyle{apalike}
 \bibliography{ibes-japan}
-
+\end{CJK}
 \end{document}

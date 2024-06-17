@@ -1,0 +1,348 @@
+cls
+clear all
+set graph off
+
+global mypath "/Users/kawabatahatsu/Desktop/ra/IBES/international"
+*global mypath "/Users/tsenga/ibes-japan/ibes-japan"
+use $mypath/merged.dta, clear
+
+
+keep if _merge == 3
+drop _merge
+
+gen horizon = eym - sym
+
+gen Fdis_CV =  STDEV/abs(MEDEST)
+gen FE_log = abs(log(ACTUAL/MEDEST))
+gen FE_pct = abs(ACTUAL/MEDEST -1)
+
+bysort CNAME: egen first_year = min(eyear)
+bysort CNAME: egen Age = max(eyear - first_year)
+
+order OFTIC STATPERS syear eyear MEDEST ACTUAL sale ni
+sort OFTIC STATPERS syear eyear
+
+preserve
+collapse (mean) ACTUAL sale ni NUMEST Fdis_CV FE_log FE_pct MEDEST, by(OFTIC eyear)
+
+by OFTIC (eyear): gen ACTUAL_growth = (ACTUAL - ACTUAL[_n-1]) / ACTUAL[_n-1]
+by OFTIC (eyear): gen SD_ACTUAL_growth = sqrt((sum((ACTUAL_growth - ACTUAL_growth[_n-1])/ACTUAL_growth[_n-1])^2)/(_n-1))
+
+keep OFTIC eyear SD_ACTUAL_growth
+save "$mypath/sd_growth.dta", replace
+restore
+
+merge m:1 OFTIC eyear using "$mypath/sd_growth.dta"
+drop _merge
+
+levelsof eyear, local(levels)
+foreach l of local levels{
+	preserve
+	keep if eyear == `l'
+	duplicates drop TICKER, force
+	egen num_firms = count(TICKER)
+	keep eyear num_firms
+	duplicates drop num_firms, force
+	tempfile `l'
+	save `l',replace
+	restore
+}
+preserve
+
+
+local first = 1
+foreach l of local levels {
+    if `first' {
+        use `l', clear
+        local first = 0
+    }
+    else {
+        append using `l'
+    }
+}
+
+
+save "$mypath/num_firms.dta", replace
+
+restore
+
+
+levelsof eyear, local(levels)
+foreach l of local levels{
+	preserve
+	keep if eyear == `l'
+	keep NUMEST Fdis_CV FE_log FE_pct
+	winsor2 *, replace cuts(1 99) trim
+	egen mean_NUMEST = mean(NUMEST)
+	egen mean_Fdis_CV = mean(Fdis_CV)
+	egen mean_FE_log = mean(FE_log)
+	egen mean_FE_pct = mean(FE_pct)
+	gen eyear = `l'
+	drop NUMEST Fdis_CV FE_log FE_pct
+	duplicates drop mean_NUMEST, force
+	tempfile `l'
+	save `l',replace
+	
+	restore 
+}
+
+preserve
+
+local first = 1
+foreach l of local levels {
+    if `first' {
+        use `l', clear
+        local first = 0
+    }
+    else {
+        append using `l'
+    }
+}
+
+
+save "$mypath/sum_year.dta", replace
+
+restore
+
+levelsof eyear, local(levels)
+foreach l of local levels{
+	preserve
+	keep if eyear == `l'
+	keep sale ta
+	duplicates drop	*, force
+	winsor2 *, replace cuts(1 99) trim
+	egen mean_sale = mean(sale)
+	egen mean_ta = mean(ta)
+	gen mean_sale_log = log(mean_sale)
+	gen mean_ta_log = log(mean_ta)
+	gen eyear = `l'
+	drop sale ta
+	duplicates drop mean_sale, force
+	tempfile `l'
+	save `l',replace	
+	restore 
+}
+
+preserve
+
+local first = 1
+foreach l of local levels {
+    if `first' {
+        use `l', clear
+        local first = 0
+    }
+    else {
+        append using `l'
+    }
+}
+
+
+save "$mypath/sum_renketsu.dta", replace
+
+
+merge 1:1 eyear using "$mypath/num_firms.dta"
+
+save sum, replace
+drop _merge 
+
+merge 1:1 eyear using "$mypath/sum_year.dta"
+
+save sum, replace
+drop _merge
+order eyear, first
+
+outsheet using "$mypath/sum_year.tex", replace
+
+twoway (line num_firms eyear,lwidth(thick) sort), xtitle("") ytitle("Number of Firms") xlabel(1985(10)2023) legend(label(1 "Number of firms")) name(num_firms, replace)
+twoway (line mean_sale eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of sales") xscale(r(1985 2024)) legend(label(1 "mean of sales")) name(mean_sale, replace)
+twoway (line mean_ta eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of total assets") xscale(r(1985 2024)) legend(label(1 "mean of total assets")) name(mean_ta, replace)
+twoway (line mean_sale_log eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of sales (log)") xscale(r(1985 2024)) legend(label(1 "mean_sale log")) name(mean_sale_log, replace)
+twoway (line mean_ta_log eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of assets (log)") xscale(r(1985 2024)) legend(label(1 "mean_ta log")) name(mean_ta_log, replace)
+twoway (line mean_NUMEST eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of number of estimator") xscale(r(1985 2024)) legend(label(1 "mean of Number of estimator")) name(mean_NUMEST, replace)
+twoway (line mean_Fdis_CV eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of Fdis CV") xscale(r(1985 2024)) legend(label(1 "mean_Fdis_CV")) name(mean_Fdis_CV, replace)
+twoway (line mean_FE_log eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of FE log") xscale(r(1985 2024)) legend(label(1 "mean_FE_log")) name(mean_FE_log, replace)
+twoway (line mean_FE_pct eyear,lwidth(thick) sort), xtitle("") ytitle("Mean of FE pct") xscale(r(1985 2024)) legend(label(1 "mean_FE_pct")) name(mean_FE_pct, replace)
+
+set graph on
+graph combine num_firms mean_sale mean_ta mean_sale_log mean_ta_log mean_NUMEST mean_Fdis_CV mean_FE_log mean_FE_pct, title("") graphregion(color(white)) name(combo, replace)
+graph export "$mypath/combo.png", replace
+set graph off
+
+
+foreach l of local levels {
+	erase "`l'.dta"
+}
+
+
+restore
+
+$horizon
+
+keep if horizon >= 0
+
+levelsof horizon, local(levels)
+foreach l of local levels{
+	preserve
+	keep if horizon == `l'
+	duplicates drop TICKER, force
+	egen num_firms = count(TICKER)
+	keep horizon num_firms
+	duplicates drop num_firms, force
+	tempfile `l'
+	save `l',replace
+	restore
+}
+
+preserve
+
+
+local first = 1
+foreach l of local levels {
+    if `first' {
+        use `l', clear
+        local first = 0
+    }
+    else {
+        append using `l'
+    }
+}
+
+
+save "$mypath/num_firms.dta", replace
+
+restore
+
+
+levelsof horizon, local(levels)
+foreach l of local levels{
+	preserve
+	keep if horizon == `l'
+	keep NUMEST Fdis_CV FE_log FE_pct
+	winsor2 NUMEST Fdis_CV FE_log FE_pct, replace cuts(1 99) trim
+	egen mean_NUMEST = mean(NUMEST)
+	egen mean_Fdis_CV = mean(Fdis_CV)
+	egen mean_FE_log = mean(FE_log)
+	egen mean_FE_pct = mean(FE_pct)
+	gen horizon = `l'
+	drop NUMEST Fdis_CV FE_log FE_pct
+	duplicates drop mean_NUMEST, force
+	tempfile `l'
+	save `l',replace
+	
+	restore 
+}
+
+preserve
+
+local first = 1
+foreach l of local levels {
+    if `first' {
+        use `l', clear
+        local first = 0
+    }
+    else {
+        append using `l'
+    }
+}
+
+
+save "$mypath/sum_horizon.dta", replace
+
+restore
+
+levelsof horizon, local(levels)
+foreach l of local levels{
+	preserve
+	keep if horizon == `l'
+	keep sale ta
+	duplicates drop	*, force
+	winsor2 *, replace cuts(1 99) trim
+	egen mean_sale = mean(sale)
+	egen mean_ta = mean(ta)
+	gen mean_sale_log = log(mean_sale)
+	gen mean_ta_log = log(mean_ta)
+	gen horizon = `l'
+	drop sale ta
+	duplicates drop mean_sale, force
+	tempfile `l'
+	save `l',replace	
+	restore 
+}
+
+preserve
+
+local first = 1
+foreach l of local levels {
+    if `first' {
+        use `l', clear
+        local first = 0
+    }
+    else {
+        append using `l'
+    }
+}
+
+save "$mypath/sum_renketsu.dta", replace
+
+
+merge 1:1 horizon using "$mypath/num_firms.dta"
+
+save sum, replace
+drop _merge 
+
+merge 1:1 horizon using "$mypath/sum_horizon.dta"
+
+save sum, replace
+drop _merge
+order horizon, first
+
+outsheet using "$mypath/sum_horizon.tex", replace
+
+
+save "$mypath/sum_renketsu.dta", replace
+
+twoway (line num_firms horizon,lwidth(thick) sort), ytitle("Number of firms") legend(label(1 "num_firms")) name(num_firms, replace)
+twoway (line mean_sale horizon,lwidth(thick) sort), ytitle("Mean of sales") legend(label(1 "mean_sale")) name(mean_sale, replace)
+twoway (line mean_ta horizon,lwidth(thick) sort), ytitle("Mean of total assets") legend(label(1 "mean_ta")) name(mean_ta, replace)
+twoway (line mean_sale_log horizon,lwidth(thick) sort), ytitle("Mean of sales (log)") legend(label(1 "mean_sale")) name(mean_sale_log, replace)
+twoway (line mean_ta_log horizon,lwidth(thick) sort), ytitle("Mean of total assets (log)") legend(label(1 "mean_ta")) name(mean_ta_log, replace)
+twoway (line mean_NUMEST horizon,lwidth(thick) sort), ytitle("Mean of number of estimator") legend(label(1 "mean_NUMEST")) name(mean_NUMEST, replace)
+twoway (line mean_Fdis_CV horizon,lwidth(thick) sort), ytitle("Mean of Fdis CV") legend(label(1 "mean_Fdis_CV")) name(mean_Fdis_CV, replace)
+twoway (line mean_FE_log horizon,lwidth(thick) sort), ytitle("Mean of FE log") legend(label(1 "mean_FE_log")) name(mean_FE_log, replace)
+twoway (line mean_FE_pct horizon,lwidth(thick) sort), ytitle("Mean of FE pct") legend(label(1 "mean_FE_pct")) name(mean_FE_pct, replace)
+
+set graph on
+graph combine num_firms mean_sale mean_ta mean_sale_log mean_ta_log mean_NUMEST mean_Fdis_CV mean_FE_log mean_FE_pct, title("") graphregion(color(white)) name(combo1, replace)
+graph export "$mypath/combo1.png", replace
+set graph off
+
+outsheet using "$mypath/sum_horizon.tex", replace
+
+restore
+
+
+describe
+winsor2 Fdis_CV NUMEST ACTUAL STDEV, replace cuts(1 99) trim
+
+binscatter Fdis_CV NUMEST, ytitle("Fdis CV") xtitle("Number of estimator") name(stnm, replace)
+binscatter Fdis_CV horizon, ytitle("Fdis CV") name(stho, replace)
+binscatter NUMEST horizon, ytitle("Number of estimator")  name(nmho, replace)
+binscatter ACTUAL NUMEST, ytitle("Actual") xtitle("Number of estimator") name(acnm, replace)
+binscatter ACTUAL Fdis_CV, ytitle("Actual") xtitle("Fdis CV") name(acst, replace)
+binscatter ACTUAL horizon, ytitle("Actual") name(acho, replace)
+binscatter ACTUAL MEDEST, ytitle("Actual") xtitle("Medisan of estimation") name(aaa, replace)
+binscatter STDEV NUMEST, ytitle("Standard deviation") xtitle("Number of estimator") name(bbb, replace)
+binscatter FE_log NUMEST, ytitle("FE log") xtitle("Number of estimator") name(ccc, replace)
+binscatter FE_pct NUMEST, ytitle("FE pct") xtitle("Number of estimator") name(ddd, replace)
+binscatter FE_log horizon, ytitle("FE log") name(eee, replace)
+binscatter FE_pct horizon, ytitle("FE pct") name(fff, replace)
+
+set graph on
+graph combine stnm bbb stho nmho acnm acst acho aaa ccc ddd eee fff, title("") graphregion(color(white)) name(combo2, replace)
+graph export "$mypath/combo2.png", replace
+set graph off
+
+
+foreach l of local levels {
+	erase "`l'.dta"
+}

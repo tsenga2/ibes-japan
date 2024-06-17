@@ -3,9 +3,8 @@ clear all
 set more off
 
 
-global data_path "/Users/kawabatahatsu/ibes-japan/ibes-japan"
-*global data_path "/Users/tsenga/ibes-japan/ibes-japan"
-import delimited "$data_path/renketsu.csv", clear
+
+import delimited  "/Users/kawabatahatsu/Desktop/ra/renketsu.csv", clear
 
 generate date = date(ap, "YM")
 format date %td
@@ -20,7 +19,7 @@ rename stock_code OFTIC
 
 save renketsu1, replace
 
-use "$data_path/IBES/international/ibes-summary-international.dta", clear
+use "/Users/kawabatahatsu/Desktop/ra/IBES/international/ibes-summary-international.dta", clear
 
 keep if CURCODE == "JPY"
 
@@ -37,6 +36,6 @@ format eym %tm
 destring OFTIC, replace force
 
 
-merge m:1 OFTIC eym using "$data_path/renketsu1.dta"
+merge m:1 OFTIC eym using "/Users/kawabatahatsu/Desktop/ra/IBES/international/renketsu1.dta"
 
-save "$data_path/merged.dta", replace
+save merged, replace

@@ -1,12 +1,9 @@
 cls
 clear all
 set more off
-set graphics off
+set graphics on
 
-global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan"
-*global mypath "/Users/tsenga/ibes-japan/ibes-japan"
-
- use $mypath/IBES/international/ibes-summary-international.dta, clear
+use "/Users/kawabatahatsu/Desktop/ra/IBES/international/ibes-summary-international.dta", clear
 
 keep if CURCODE == "JPY"
 
@@ -56,7 +53,7 @@ foreach l of local levels {
     outsheet using "horizon_`l'_summary.txt", replace
 }
 
-use $mypath/old_dataset.dta, clear
+use "/Users/kawabatahatsu/Desktop/ra/IBES/international/old_dataset.dta", clear
 
 * 新しい変数に各グループの平均値を格納
 bysort horizon: egen mean_NUMEST = mean(NUMEST)
@@ -88,36 +85,12 @@ graph combine mean_NUMEST mean_MEDEST mean_MEANEST mean_STDEV mean_HIGHEST mean_
 
 replace STDEV = STDEV/ACTUAL
 
-binscatter STDEV NUMEST, nq(30) name(stnm, replace)
-binscatter STDEV horizon, nq(30) name(stho, replace)
-binscatter NUMEST horizon, nq(30) name(nmho, replace)
-binscatter ACTUAL NUMEST, nq(30) name(acnm, replace)
-binscatter ACTUAL STDEV, nq(30) name(acst, replace)
-binscatter ACTUAL horizon, nq(30) name(acho, replace)
+binscatter STDEV NUMEST, name(stnm, replace)
+binscatter STDEV horizon, name(stho, replace)
+binscatter NUMEST horizon, name(nmho, replace)
+binscatter ACTUAL NUMEST, name(acnm, replace)
+binscatter ACTUAL STDEV, name(acst, replace)
+binscatter ACTUAL horizon, name(acho, replace)
 graph combine stnm stho nmho acnm acst acho, title("") graphregion(color(white)) name(combo1, replace)
 
-
-****************************************************** save at descriptive stats
-label variable ACTUAL "\textbf{Realised EPS}"
-label variable STDEV "\textbf{Forecast dispersion}"
-label variable NUMEST "\textbf{Number of estimates}"
-label variable horizon "\textbf{Forecast horizon}"
-label variable FE "\textbf{Forecast errors}"
-
-
-estpost sum STDEV NUMEST ACTUAL FE horizon, d
-est store all
-
-capture mkdir $mypath/FigureTable 
-
-esttab all ///
-using $mypath/FigureTable/desc_all.tex, replace ///
-legend noabbrev style(tex) ///
-cells("mean(fmt(2)) sd(fmt(2)) p5(fmt(2)) p25(fmt(2)) p50(fmt(2)) p75(fmt(2)) p95(fmt(2)) ") ///
-lines parentheses ///
-label nonumber noobs nogaps
-
-foreach l of local levels {
-	erase "horizon_`l'_dataset.dta"
-}
 

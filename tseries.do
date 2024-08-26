@@ -126,17 +126,24 @@ export delimited using "$mypath/ibes-summary-japan-tseries.csv", replace
 save "$mypath/ibes-summary-japan-tseries.dta", replace
 
 
-import fred NIKKEI225 JPNPRMNTO01GYSAM JPNPROMANMISMEI JPNPRMNTO01GPSAM JPNPRMNTO01IXOBM GEPUCURRENT GEPUPPP JPNEPUINDXM, daterange(1987-01-01 2023-07-01) aggregate(monthly) clear
+import fred NIKKEI225 JPNPRMNTO01GYSAM JPNPROMANMISMEI JPNPRMNTO01GPSAM JPNPRMNTO01IXOBM GEPUCURRENT GEPUPPP, daterange(1987-01-01 2023-07-01) aggregate(monthly) clear
 gen sym = ym(year(daten), month(daten))
 format sym %tm
 
-keep NIKKEI225 JPNPRMNTO01GYSAM JPNPROMANMISMEI JPNPRMNTO01GPSAM JPNPRMNTO01IXOBM GEPUCURRENT GEPUPPP JPNEPUINDXM sym
+keep NIKKEI225 JPNPRMNTO01GYSAM JPNPROMANMISMEI JPNPRMNTO01GPSAM JPNPRMNTO01IXOBM GEPUCURRENT GEPUPPP sym
 save "$mypath/japan-tseries.dta", replace
 
 
+import delimited "/Users/tsenga/ibes-japan/ibes-japan/japan_political_uncertainty_data.csv", varnames(2) clear 
+gen sym = ym(year, month)
+format sym %tm
+drop year
+drop month
+save "$mypath/japan-epu.dta", replace
 
 * Import the daily Nikkei 225 index data from FRED
 import fred NIKKEI225, clear
+
 
 gen syear=year(daten)
 gen sm=month(daten)
@@ -154,11 +161,12 @@ save "$mypath/nikkei_volatility.dta", replace
 
 use "$mypath/ibes-summary-japan-tseries.dta", clear
 merge 1:1 sym using "$mypath/japan-tseries.dta", nogenerate keep(match)
+merge 1:1 sym using "$mypath/japan-epu.dta", nogenerate keep(match)
 merge 1:1 sym using "$mypath/nikkei_volatility.dta", nogenerate keep(match)
 
 
 tsset sym
-tssmooth ma JPNEPUINDXM_MA = JPNEPUINDXM, window(6 1 0)
+tssmooth ma aenrop_MA = aenrop, window(6 1 0)
 tssmooth ma mean_Fdis_CV_MA = mean_Fdis_CV, window(6 1 6)
 tssmooth ma mean_FE_pct_MA = mean_FE_pct, window(6 1 6)
 
@@ -196,14 +204,14 @@ twoway (tsline mean_FE_pct_MA, yaxis(1) lwidth(thick)) ///
        graph export "$mypath/graph/mean_FE_pct_MA.png", replace
 
 twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
-       (tsline JPNEPUINDXM, yaxis(2) lwidth(medthick) lpattern(dash)), ///
+       (tsline aenrop, yaxis(2) lwidth(medthick) lpattern(dash)), ///
        xlabel(324(30)761, valuelabel angle(90) labsize(vsmall)) ///
        ytitle("", axis(1)) ///
        ytitle("", axis(2)) ///
        xtitle("") ///
        legend(order(1 "予測分散" 2 "政策不確実性指数") position(inside)) ///
-       name(mean_Fdis_CV_JPNEPUINDXM, replace)
-       graph export "$mypath/graph/mean_Fdis_CV_JPNEPUINDXM.png", replace
+       name(mean_Fdis_CV_aenrop, replace)
+       graph export "$mypath/graph/mean_Fdis_CV_aenrop.png", replace
 
 twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
        (tsline JPNPRMNTO01GYSAM, yaxis(2) lwidth(medthick) lpattern(dash)), ///
@@ -242,7 +250,7 @@ eststo clear
 rename JPNPRMNTO01GPSAM IIP
 rename mean_Fdis_CV Fdis
 rename mean_FE_pct FE
-rename JPNEPUINDXM EPU
+rename aenrop EPU
 rename volatility vol
 rename NIKKEI225 nikkei
 
@@ -300,7 +308,7 @@ esttab EPU_nikkei EPU_nikkei_month EPU_nikkei_year ///
     title("Regression Results") ///
     mtitles("Model 1" "Model 2" "Model 3" "Model 4" "Model 5" "Model 6") ///
     keep(nikkei) ///
-    addnotes("Dependent variables: mean_Fdis_CV, JPNEPUINDXM, volatility" ///
+    addnotes("Dependent variables: mean_Fdis_CV, aenrop, volatility" ///
              "Independent variables: JPNPRMNTO01GPSAM, NIKKEI225") ///
     prehead(\begin{tabular}{l*{@M}{c}}\tabularnewline \hline & \multicolumn{3}{c}{\textbf{EPU} }& \multicolumn{3}{c}{\textbf{Stock volatility}}\\\) ///
     posthead("\hline") prefoot("\hline") ///

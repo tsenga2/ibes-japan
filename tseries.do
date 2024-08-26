@@ -2,8 +2,8 @@ cls
 clear all
 set graph off
 
-global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan"
-*global mypath "/Users/tsenga/ibes-japan/ibes-japan"
+*global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan"
+global mypath "/Users/tsenga/ibes-japan/ibes-japan"
 use $mypath/IBES/international/ibes-summary-international.dta, clear
 
 capture mkdir $mypath/graph 
@@ -81,17 +81,35 @@ forval year = `startyear'/`endyear' {
     }
 }
 
+forvalues i = 330/759 {
+    local y = year(dofm(`i'))
+    local m = month(dofm(`i'))
+    label define sym_lbl `i' "`y'年`m'月", add
+}
+
+label values sym sym_lbl
+
 twoway (line mean_Fdis_CV sym, lwidth(thick) sort), ///
-xtitle("") ytitle("") /// 
-xlabel(`labels', format(%tm) labsize(small)) ///
-text(0.95 400 "The discount rate cut to 1.00%", place(north) size(small)) ///
-text(1.25 424 "Banking crisis / Asian Financial Crisis", place(north) size(small)) ///
-text(1.45 469 "9/11 Terrorist Attacks", place(north) size(small)) ///
-text(1.89 510 "Iraq War begins (March 2003)", place(north) size(small)) ///
-text(1.81 585 "Resona Bank bailout (May 2003)", place(north) size(small)) ///
-text(0.85 574 "Global Financial Crisis", place(north) size(small)) ///
-text(1.12 614 "Tohoku Earthquake and Tsunami", place(north) size(small)) ///
-text(1.9 720 "COVID-19 Pandemic", place(north) size(small)) ///
+xlabel(330(30)759, valuelabel angle(90) labsize(*0.7)) ///
+xtitle("") ytitle("") ///
+text(0.97 403 "ドル・円100円突破", place(north) size(small)) ///
+text(1.31 453 "銀行危機/", place(north) size(small)) ///
+text(1.24 469 "アジア金融危機", place(north) size(small)) ///
+text(1.46 477 "米国同時多発テロ", place(north) size(small)) ///
+text(1.39 501 "|", place(north) size(small)) ///
+text(1.34 501 "|", place(north) size(small)) ///
+text(1.29 501 "|", place(north) size(small)) ///
+text(1.24 501 "|", place(north) size(small)) ///
+text(1.19 501 "|", place(north) size(small)) ///
+text(1.14 501 "|", place(north) size(small)) ///
+text(1.09 501 "|", place(north) size(small)) ///
+text(1.04 501 "|", place(north) size(small)) ///
+text(1.01 500.7 "\/", place(north) size(small)) ///
+text(1.89 510 "イラク戦争勃発", place(north) size(small)) ///
+text(1.81 585 "りそな銀行への公的資金注入決定", place(north) size(small)) ///
+text(0.88 574 "グローバル金融危機", place(north) size(small)) ///
+text(1.13 615 "ドル/円戦後最高値", place(north) size(small)) ///
+text(1.92 710 "新型コロナウイルスパンデミック", place(north) size(small)) ///
 name(mean_Fdis_CV, replace)
 graph export "$mypath/graph/meanfdiscv_m.png", replace
 
@@ -144,9 +162,31 @@ tssmooth ma JPNEPUINDXM_MA = JPNEPUINDXM, window(6 1 0)
 tssmooth ma mean_Fdis_CV_MA = mean_Fdis_CV, window(6 1 6)
 tssmooth ma mean_FE_pct_MA = mean_FE_pct, window(6 1 6)
 
+
+label drop sym_lbl
+
+levelsof sym, local(syms)
+foreach s of local syms {
+    local y = year(dofm(`s'))
+    local m = month(dofm(`s'))
+    label define sym_lbl `s' "`y'年`m'月", add
+}
+
+label values sym sym_lbl
+
 twoway (tsline mean_Fdis_CV_MA, yaxis(1) lwidth(thick)) ///
        (tsline mean_Fdis_CV, yaxis(2) lwidth(medthick) lpattern(dash)), ///
-       xlabel(`labels', format(%tm) labsize(small)) ///
+       xlabel(324(30)761, valuelabel angle(90) labsize(vsmall)) ///
+       ytitle("", axis(1)) ///
+       ytitle("", axis(2)) ///
+       xtitle("") ///
+       legend(order(1 "Mean Forecast Dispersion (moving average)" 2 "Mean Forecast Dispersion") position(inside)) ///
+       name(mean_Fdis_CV_MA, replace)
+
+
+twoway (tsline mean_Fdis_CV_MA, yaxis(1) lwidth(thick)) ///
+       (tsline mean_Fdis_CV, yaxis(2) lwidth(medthick) lpattern(dash)), ///
+       xlabel(324(30)761, valuelabel angle(90) labsize(vsmall)) ///
        ytitle("", axis(1)) ///
        ytitle("", axis(2)) ///
        xtitle("") ///
@@ -156,7 +196,7 @@ twoway (tsline mean_Fdis_CV_MA, yaxis(1) lwidth(thick)) ///
 
 twoway (tsline mean_FE_pct_MA, yaxis(1) lwidth(thick)) ///
        (tsline mean_FE_pct, yaxis(2) lwidth(medthick) lpattern(dash)), ///
-       xlabel(`labels', format(%tm) labsize(small)) ///
+       xlabel(324(30)761, valuelabel angle(90) labsize(vsmall)) ///
        ytitle("", axis(1)) ///
        ytitle("", axis(2)) ///
        xtitle("") ///
@@ -166,7 +206,7 @@ twoway (tsline mean_FE_pct_MA, yaxis(1) lwidth(thick)) ///
 
 twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
        (tsline JPNEPUINDXM, yaxis(2) lwidth(medthick) lpattern(dash)), ///
-       xlabel(`labels', format(%tm) labsize(small)) ///
+       xlabel(324(30)761, valuelabel angle(90) labsize(vsmall)) ///
        ytitle("", axis(1)) ///
        ytitle("", axis(2)) ///
        xtitle("") ///
@@ -176,7 +216,7 @@ twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
 
 twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
        (tsline JPNPRMNTO01GYSAM, yaxis(2) lwidth(medthick) lpattern(dash)), ///
-       xlabel(`labels', format(%tm) labsize(small)) ///
+       xlabel(324(30)761, valuelabel angle(90) labsize(vsmall)) ///
        ytitle("", axis(1)) ///
        ytitle("", axis(2)) ///
        xtitle("") ///
@@ -186,7 +226,7 @@ twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
 
 twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
        (tsline NIKKEI225, yaxis(2) lwidth(medthick) lpattern(dash)), ///
-       xlabel(`labels', format(%tm) labsize(small)) ///
+       xlabel(324(30)761, valuelabel angle(90) labsize(vsmall)) ///
        ytitle("", axis(1)) ///
        ytitle("", axis(2)) ///
        xtitle("") ///
@@ -196,7 +236,7 @@ twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
 
 twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
        (tsline volatility, yaxis(2) lwidth(medthick) lpattern(dash)), ///
-       xlabel(`labels', format(%tm) labsize(small)) ///
+       xlabel(324(30)761, valuelabel angle(90) labsize(vsmall)) ///
        ytitle("", axis(1)) ///
        ytitle("", axis(2)) ///
        xtitle("") ///

@@ -185,7 +185,7 @@ label values sym sym_lbl
 
 twoway (tsline mean_Fdis_CV_MA, yaxis(1) lwidth(thick)) ///
        (tsline mean_Fdis_CV, yaxis(2) lwidth(medthick) lpattern(dash)), ///
-       xlabel(324(30)761, valuelabel angle(90) labsize(vsmall)) ///
+       xlabel(330(30)759, valuelabel angle(90) labsize(vsmall)) ///
        ytitle("", axis(1)) ///
        ytitle("", axis(2)) ///
        xtitle("") ///
@@ -205,7 +205,7 @@ twoway (tsline mean_FE_pct_MA, yaxis(1) lwidth(thick)) ///
 
 twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
        (tsline aenrop, yaxis(2) lwidth(medthick) lpattern(dash)), ///
-       xlabel(324(30)761, valuelabel angle(90) labsize(vsmall)) ///
+       xlabel(330(30)759, valuelabel angle(90) labsize(vsmall)) ///
        ytitle("", axis(1)) ///
        ytitle("", axis(2)) ///
        xtitle("") ///

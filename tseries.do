@@ -174,15 +174,6 @@ foreach s of local syms {
 
 label values sym sym_lbl
 
-twoway (tsline mean_Fdis_CV_MA, yaxis(1) lwidth(thick)) ///
-       (tsline mean_Fdis_CV, yaxis(2) lwidth(medthick) lpattern(dash)), ///
-       xlabel(324(30)761, valuelabel angle(90) labsize(vsmall)) ///
-       ytitle("", axis(1)) ///
-       ytitle("", axis(2)) ///
-       xtitle("") ///
-       legend(order(1 "Mean Forecast Dispersion (moving average)" 2 "Mean Forecast Dispersion") position(inside)) ///
-       name(mean_Fdis_CV_MA, replace)
-
 
 twoway (tsline mean_Fdis_CV_MA, yaxis(1) lwidth(thick)) ///
        (tsline mean_Fdis_CV, yaxis(2) lwidth(medthick) lpattern(dash)), ///
@@ -190,7 +181,7 @@ twoway (tsline mean_Fdis_CV_MA, yaxis(1) lwidth(thick)) ///
        ytitle("", axis(1)) ///
        ytitle("", axis(2)) ///
        xtitle("") ///
-       legend(order(1 "Mean Forecast Dispersion (moving average)" 2 "Mean Forecast Dispersion") position(inside)) ///
+       legend(order(1 "予測分散 (移動平均)" 2 "予測分散(原データ))") position(inside)) ///
        name(mean_Fdis_CV_MA, replace)
        graph export "$mypath/graph/mean_Fdis_CV_MA.png", replace
 
@@ -210,7 +201,7 @@ twoway (tsline mean_Fdis_CV, yaxis(1) lwidth(thick)) ///
        ytitle("", axis(1)) ///
        ytitle("", axis(2)) ///
        xtitle("") ///
-       legend(order(1 "Mean Forecast Dispersion" 2 "EPU (moving average)") position(inside)) ///
+       legend(order(1 "予測分散" 2 "政策不確実性指数") position(inside)) ///
        name(mean_Fdis_CV_JPNEPUINDXM, replace)
        graph export "$mypath/graph/mean_Fdis_CV_JPNEPUINDXM.png", replace
 

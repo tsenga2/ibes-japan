@@ -2,8 +2,8 @@ cls
 clear all
 set graph off
 
-global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan"
-*global mypath "/Users/tsenga/ibes-japan/ibes-japan"
+*global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan"
+global mypath "/Users/tsenga/ibes-japan/ibes-japan"
 use $mypath/merged.dta, clear
 
 capture mkdir $mypath/graph 
@@ -609,13 +609,13 @@ winsor2 Fdis_CV NUMEST ACTUAL STDEV SD_ACTUAL_growth stockvol, replace cuts(1 99
 
 set graph on
 
-binscatter Fdis_CV NUMEST, ytitle("Fdis CV") xtitle("Number of estimator") name(stnm, replace)
+binscatter Fdis_CV NUMEST, ytitle("予測不一致（標準化）") xtitle("カバレッジ（人）") name(stnm, replace)
 graph export "$mypath/graph/FdisCVnumest.png", replace
 binscatter Fdis_CV horizon, ytitle("Fdis CV") name(stho, replace)
 graph export "$mypath/graph/FdisCVhorizon.png", replace
 binscatter NUMEST horizon, ytitle("Number of estimator")  name(nmho, replace)
 graph export "$mypath/graph/Numesthorizon.png", replace
-binscatter ACTUAL NUMEST, ytitle("Actual") xtitle("Number of estimator") name(acnm, replace)
+binscatter ACTUAL NUMEST, ytitle("EPS実現値（円）") xtitle("カバレッジ（人）") name(acnm, replace)
 graph export "$mypath/graph/ActualNmest.png", replace
 binscatter ACTUAL Fdis_CV, ytitle("Actual") xtitle("Fdis CV") name(acst, replace)
 graph export "$mypath/graph/ActualFdisCV.png", replace
@@ -623,9 +623,9 @@ binscatter ACTUAL horizon, ytitle("Actual") name(acho, replace)
 graph export "$mypath/graph/Actualhorizon.png", replace
 binscatter ACTUAL MEDEST, ytitle("Actual") xtitle("Medisan of estimation") name(aaa, replace)
 graph export "$mypath/graph/ActuslMedest.png", replace
-binscatter STDEV NUMEST, ytitle("Standard deviation") xtitle("Number of estimator") name(bbb, replace)
+binscatter STDEV NUMEST, ytitle("予測不一致（非標準化）") xtitle("カバレッジ（人）") name(bbb, replace)
 graph export "$mypath/graph/StdevNumest.png", replace
-binscatter FE_log NUMEST, ytitle("FE log") xtitle("Number of estimator") name(ccc, replace)
+binscatter FE_log NUMEST, ytitle("予測誤差（対数）") xtitle("カバレッジ（人）") name(ccc, replace)
 graph export "$mypath/graph/FElogNumest.png", replace
 binscatter FE_pct NUMEST, ytitle("FE pct") xtitle("Number of estimator") name(ddd, replace)
 graph export "$mypath/graph/FepctNumest.png", replace

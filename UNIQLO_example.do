@@ -2,7 +2,7 @@
 ******************************************************************  example
 
 global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan"
-*global mypath "/Users/tsenga/ibes-japan/ibes-japan"
+global mypath "/Users/tsenga/ibes-japan/ibes-japan"
 use $mypath/merged.dta, clear
 
 capture mkdir $mypath/graph 
@@ -85,7 +85,8 @@ keep if syear >= 2015
 forvalues i = 660/732 {
     local y = year(dofm(`i'))
     local m = month(dofm(`i'))
-    label define sym_lbl `i' "`y'年`m'月", add
+	label define sym_lbl `i' "`y'年`m'月", add
+	
 }
 
 label values sym sym_lbl
@@ -96,7 +97,7 @@ twoway (connected ACTUAL sym, yaxis(1) msize(vsmall) msymbol(square) lpattern(so
 	   (connected LOWEST  sym, yaxis(1)  msize(tiny)  msymbol(lgx) lpattern(dash)), ///
 	   title(" ") xtitle(" ") ytitle(" ")  note(" ") graphregion(color(white)) ///
 	   legend(ring(0) pos(11) order(1 "実現値" 2 "予測(最高値)" 3 "予測平均" 4 "予測（最低値）")) ///
-	   xlabel(660(12)732, valuelabel angle(90) labsize(*0.7)) name(alcoa_example_1, replace)	   
+	   xlabel(668(12)728, valuelabel angle(90) labsize(*0.7)) name(alcoa_example_1, replace)	   
 
 set graphics on
 graph combine alcoa_example_1, graphregion(color(white)) name(alcoa_example, replace)
@@ -108,9 +109,12 @@ twoway (connected FE_log sym, yaxis(1) msize(small) msymbol(lgx) lpattern(solid)
 	   (connected openingprice sym, yaxis(2) msize(small) msymbol(none) lpattern(dash)), ///
 	   title(" ") xtitle(" ") ytitle(" ") ytitle("", axis(2)) note(" ") graphregion(color(white)) ///
 	   legend(ring(0) pos(12) order(1 "予測誤差(FE)" 2 "予測分散(Fdis)" 3 "株価") ///
-	   ) xlabel(660(12)732, valuelabel angle(90) labsize(*0.7)) name(alcoa_example_2, replace)	   
+	   ) xlabel(668(12)728, valuelabel angle(90) labsize(*0.7)) name(alcoa_example_2, replace)	   
 
 set graphics on
 graph combine alcoa_example_1 alcoa_example_2, graphregion(color(white)) name(alcoa_example_fe, replace)
 graph export "$mypath/graph/UNIQLO_2.png", replace
-set graphics off
+
+
+
+

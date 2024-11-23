@@ -609,13 +609,13 @@ winsor2 Fdis_CV NUMEST ACTUAL STDEV SD_ACTUAL_growth stockvol, replace cuts(1 99
 
 set graph on
 
-binscatter Fdis_CV NUMEST, ytitle("予測不一致（標準化）") xtitle("カバレッジ（人）") name(stnm, replace)
+binscatter Fdis_CV NUMEST, ytitle("予測分散") xtitle("アナリスト数（人）") name(stnm, replace)
 graph export "$mypath/graph/FdisCVnumest.png", replace
 binscatter Fdis_CV horizon, ytitle("Fdis CV") name(stho, replace)
 graph export "$mypath/graph/FdisCVhorizon.png", replace
-binscatter NUMEST horizon, ytitle("Number of estimator")  name(nmho, replace)
+binscatter NUMEST horizon, ytitle("アナリスト数（人）")  name(nmho, replace)
 graph export "$mypath/graph/Numesthorizon.png", replace
-binscatter ACTUAL NUMEST, ytitle("EPS実現値（円）") xtitle("カバレッジ（人）") name(acnm, replace)
+binscatter ACTUAL NUMEST, ytitle("EPS実現値（円）") xtitle("アナリスト数（人）") name(acnm, replace)
 graph export "$mypath/graph/ActualNmest.png", replace
 binscatter ACTUAL Fdis_CV, ytitle("Actual") xtitle("Fdis CV") name(acst, replace)
 graph export "$mypath/graph/ActualFdisCV.png", replace
@@ -623,11 +623,11 @@ binscatter ACTUAL horizon, ytitle("Actual") name(acho, replace)
 graph export "$mypath/graph/Actualhorizon.png", replace
 binscatter ACTUAL MEDEST, ytitle("Actual") xtitle("Medisan of estimation") name(aaa, replace)
 graph export "$mypath/graph/ActuslMedest.png", replace
-binscatter STDEV NUMEST, ytitle("予測不一致（非標準化）") xtitle("カバレッジ（人）") name(bbb, replace)
+binscatter STDEV NUMEST, ytitle("予測標準偏差") xtitle("アナリスト数（人）") name(bbb, replace)
 graph export "$mypath/graph/StdevNumest.png", replace
-binscatter FE_log NUMEST, ytitle("予測誤差（対数）") xtitle("カバレッジ（人）") name(ccc, replace)
+binscatter FE_log NUMEST, ytitle("予測誤差（対数）") xtitle("アナリスト数（人）") name(ccc, replace)
 graph export "$mypath/graph/FElogNumest.png", replace
-binscatter FE_pct NUMEST, ytitle("FE pct") xtitle("Number of estimator") name(ddd, replace)
+binscatter FE_pct NUMEST, ytitle("FE pct") xtitle("アナリスト数（人）") name(ddd, replace)
 graph export "$mypath/graph/FepctNumest.png", replace
 binscatter FE_log horizon, ytitle("FE log") name(eee, replace)
 graph export "$mypath/graph/FElogHorizon.png", replace

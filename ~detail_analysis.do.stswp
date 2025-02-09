@@ -14,6 +14,7 @@ egen group_fpedats = group(FPEDATS)
 egen group_estimator = group(ESTIMATOR)
 egen id = group(group_analys group_estimator)
 egen id_ticker = group(id group_ticker)
+egen id_a = group(id_ticker FPEDATS ACTUAL)
 egen update_frequency = nvals(VALUE), by(group_fpedats id_ticker)
 
 
@@ -27,14 +28,12 @@ display r(mean)
 
 restore
 
-preserve
-*average rate of change
-format ANNDATS %td
-tsset id_ticker ANNDATS 
-*Error occurs on above line
+bysort id_a (ANNDATS): gen prev_value = VALUE[_n-1]
+gen update_ratio = (VALUE - prev_value) / prev_value
 
--------
-gen update_rate = VALUE - L.VALUE by(group_ticker group_fpedats id)
+
+a
+
 a
 keep if id == 6883
 

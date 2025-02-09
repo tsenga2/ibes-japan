@@ -2,8 +2,8 @@ cls
 clear all
 set graph off
 
-*global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan"
-global mypath "/Users/tsenga/ibes-japan/ibes-japan"
+global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan"
+*global mypath "/Users/tsenga/ibes-japan/ibes-japan"
 use $mypath/IBES/international/ibes-summary-international.dta, clear
 
 capture mkdir $mypath/graph 

@@ -2,8 +2,8 @@ cls
 clear all
 set graph off
 
-*global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan"
-global mypath "/Users/tsenga/ibes-japan/ibes-japan"
+global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan"
+*global mypath "/Users/tsenga/ibes-japan/ibes-japan"
 use $mypath/merged.dta, clear
 
 capture mkdir $mypath/graph 
@@ -587,7 +587,7 @@ twoway (line mean_ta_log horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mea
 graph export "$mypath/graph/meantalog_h.png", replace
 twoway (line mean_NUMEST horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of number of estimator") legend(label(1 "mean_NUMEST")) name(mean_NUMEST, replace)
 graph export "$mypath/graph/meannumest_h.png", replace
-twoway (line mean_Fdis_CV horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of Fdis CV") legend(label(1 "mean_Fdis_CV")) name(mean_Fdis_CV, replace)
+twoway (line mean_Fdis_CV horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("予測分散") xtitle("ホライゾン") legend(label(1 "mean_Fdis_CV")) name(mean_Fdis_CV, replace)
 graph export "$mypath/graph/meanfdis_h.png", replace
 twoway (line mean_FE_log horizon,lwidth(thick) sort), xlabel(0(1)12) ytitle("Mean of FE log") legend(label(1 "mean_FE_log")) name(mean_FE_log, replace)
 graph export "$mypath/graph/meanFElog_h.png", replace

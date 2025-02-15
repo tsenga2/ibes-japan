@@ -9,13 +9,13 @@ use $mypath/ibes-detail-international.dta, clear
 keep if CURR == "JPY"
 drop if missing(ACTUAL)
 
-* ここ再検討しましょうか（アップデート頻度の件ですね）
-preserve
 egen group_actual = group(ACTUAL)
 egen group_analys = group(ANALYS)
 
 egen update_frequency = nvals(VALUE), by(group_actual group_analys)
 
+preserve
+* ここ再検討しましょうか（アップデート頻度の件ですね）
 duplicates drop group_actual group_analys, force
 
 binscatter ACTUAL update_frequency

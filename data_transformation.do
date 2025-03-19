@@ -11,6 +11,7 @@ drop CURR
 drop if missing(ACTUAL)
 
 egen analyst_id = group(ESTIMATOR ANALYS)
+egen company_id = group(TICKER CNAME OFTIC)
 *egen id = group(analyst_id TICKER ANNDATS ANNTIMS FPEDATS)
 gen rownum = _n
 
@@ -28,5 +29,48 @@ drop rownum
 duplicates drop analyst_id FPEDATS ANNDATS TICKER, force
 
 order TICKER CNAME analyst_id ANNDATS FPEDATS VALUE6 ACTUAL6 VALUE7 ACTUAL7 VALUE8 ACTUAL8 VALUE9 ACTUAL9 VALUE1 ACTUAL1
-sort TICKER FPEDATS analyst_id
+sort TICKER analyst_id ANNDATS FPEDATS
+
+
+egen global_combo = group(ESTIMATOR ANALYS CNAME analyst_id)
+bysort company_id FPEDATS (global_combo): gen change_flag = (global_combo != global_combo[_n-1]) if _n>1
+bysort company_id FPEDATS (global_combo): replace change_flag = 1 if _n==1
+by company_id FPEDATS: gen forecaster = sum(change_flag)
+
+foreach v in VALUE1 VALUE6 VALUE7 VALUE8 VALUE9 ACTUAL1 ACTUAL6 ACTUAL7 ACTUAL8 ACTUAL9{
+    bysort TICKER analyst_id ANNDATS FPEDATS (`v'): replace `v' = `v'[_n-1] if missing(`v')
+}
+
+
+
+stop
+* 文字列の日付をStataの日付形式に変換
+gen syear=year(ANNDATS)
+gen sm=month(ANNDATS)
+gen sym = ym(syear, sm)
+gen month = sym
+format sym %tm
+
+tsset sym
+
+stop
+
+gen date_d = date(ANNDATS, "DMY")
+format date_d %td
+
+stop
+
+* 月単位の変数を作成 (ym format)
+gen month = mofd(date_d)
+format month %tm
+
+* 時系列データとしてセット
+tsset month
+
+* 飛び飛びの月を補完
+tsfill
+
+* 確認
+list, sepby(month)
+
 stop

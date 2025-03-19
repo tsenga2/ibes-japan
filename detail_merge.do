@@ -12,7 +12,7 @@ drop CURR
 drop if missing(ACTUAL)
 destring FPI, replace force
 drop if missing(FPI)
-s
+drop if ANALYS == 0
 
 gen syear=year(ANNDATS)
 gen sm=month(ANNDATS)
@@ -24,18 +24,16 @@ gen eyear=year(FPEDATS)
 gen em=month(FPEDATS)
 gen eym = ym(eyear, em)
 format eym %tm
-
-egen analyst_id = group(ESTIMATOR ANALYS)
+*group(ESTIMATOR ANALYS)
 gen rownum = _n
 
-egen global_combo = group(ESTIMATOR ANALYS TICKER analyst_id)
+egen global_combo = group(TICKER ANALYS)
 bysort TICKER FPEDATS (global_combo): gen change_flag = (global_combo != global_combo[_n-1]) if _n>1
 bysort TICKER FPEDATS (global_combo): replace change_flag = 1 if _n==1
 by TICKER FPEDATS: gen F = sum(change_flag)
 
 rename VALUE forecaster
 reshape wide forecaster, i(rownum) j(F)
-drop analyst_id
 
 foreach v of varlist forecaster1-forecaster33 {
     bysort TICKER month FPEDATS (`v'): ///
@@ -48,14 +46,14 @@ foreach v of varlist forecaster1-forecaster33 {
 	replace `v'= `v'_1
 	drop `v'_1
 }
+
 duplicates drop forecaster1-forecaster33 TICKER FPEDATS, force
 
-duplicates tag TICKER sym eym, gen(dupvar)
-keep if dupvar == 1
 sort TICKER sym
-s
+
 
 order CNAME sym eym ACTUAL forecaster1-forecaster33
+
 tempfile data
 save `data', replace
 
@@ -78,4 +76,10 @@ format eym %tm
 
 merge 1:1 TICKER sym eym using `data'
 
+foreach v of varlist forecaster1-forecaster33 {
+    bysort TICKER eym (sym): ///
+        replace `v' = `v'[_n-1] if missing(`v')
+}
+
+sort TICKER eym sym
 stop

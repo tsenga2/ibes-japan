@@ -170,14 +170,15 @@ quietly {
 merge 1:1 TICKER sym eym using `data'
 
 
-foreach v of varlist ACTUAL forecaster1-forecaster34 VALUE1-VALUE7 {
+foreach v of varlist ACTUAL VALUE1-VALUE7 forecaster1-forecaster34 {
      bysort TICKER eym (sym): ///
          replace `v' = `v'[_n-1] if missing(`v')
 }
 
 order TICKER eym sym ACTUAL VALUE1-VALUE7 forecaster1-forecaster34 
 
-drop change_flag pdicity_sort group_id1 eym_max
+drop change_flag pdicity_sort group_id1 eym_max rownum
 sort TICKER eym sym
 
+save "$mypath/merged_data.dta", replace
 stop

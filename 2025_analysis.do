@@ -1,7 +1,68 @@
 global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan/IBES/Both"
 *global mypath "/Users/tsenga/ibes-japan/ibes-japan/IBES/international"
 use $mypath/merged_data.dta, clear
+s
+* ソートに使う日時変数が sym でなければ適宜変更してください
+sort TICKER eym sym
 
+foreach i of numlist 1/7 {
+    * 前行と異なれば1、同じなら0
+    by TICKER eym: gen byte val_change`i' = (VALUE`i' != VALUE`i'[_n-1])
+    * グループ先頭は必ず0
+    replace val_change`i' = 0 if _n==1
+}
+
+foreach i of numlist 1/34 {
+    * 前行と異なれば1、同じなら0
+    by TICKER eym: gen byte f_change`i' = (forecaster`i' != forecaster`i'[_n-1])
+    * グループ先頭は必ず0
+    replace f_change`i' = 0 if _n==1
+}
+
+* 例：VALUE1–VALUE7 が対象の場合
+
+egen n_f_change = rowtotal(f_change1-f_change34)
+gen byte d_f_change = 0
+replace d_f_change = 1 if n_f_change > 0
+
+
+* 1) パネル宣言（必要なら）
+* xtset TICKER eym
+
+* 2) モデル名リスト用のローカルマクロを初期化
+local mlist
+
+* 3) ループで logit → estimates store → mlist に追加
+forvalues i = 1/4 {
+    di as txt "==== val_change`i' モデル ===="
+    quietly logit d_f_change val_change`i', vce(cluster TICKER)
+    estimates store m`i'
+    local mlist "`mlist' m`i'"
+}
+
+* 4) 保存されたモデル名を確認（オプション）
+estimates dir
+
+* 5) 一括テーブル表示
+estimates table `mlist', b(3) se(%9.3f) stats(N ll)
+
+* 1) coefplot がなければインストール
+cap which coefplot
+if _rc ssc install coefplot, replace
+
+* 2) _cons を除き、val_change1–val_change7 の係数をプロット
+coefplot m1 m2 m3 m4, ///
+    drop(_cons) /// 定数項は表示しない
+    keep(val_change1 val_change2 val_change3 val_change4) /// 変化ダミーだけ
+    xline(0) /// 0 の縦線
+    vertical /// 垂直プロット（変数名が y 軸）
+    xlabel(-2(1)24) /// 必要に応じて調整
+    legend(on order(1 "VALUE1" 2 "VALUE2" 3 "VALUE3" 4 "VALUE4")) ///
+    title("Change Dummy のロジット係数と95%CI") ///
+    ytitle("変数") xtitle("係数 (log-odds)")
+
+
+stop
 drop if missing(NUMUP)
 
 gen value_updated = 0

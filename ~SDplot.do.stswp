@@ -26,7 +26,7 @@ foreach v of varlist forecaster1-forecaster27 {
 /******************************************************************
 * 2. 好きな窓幅をここで指定（例：1,2,3 か月）
 ******************************************************************/
-local wins "1 2 3 4 5 6 7 8 9 10 11 12"
+local wins "1 2 3 4"
 
 /******************************************************************
 * 3. 各窓幅 w について：
@@ -49,6 +49,14 @@ foreach w of local wins {
     /* 掃除：不要なら一時変数を削除 */
     *drop `tvars'
 }
+
+*****
+*3.5 
+*****
+egen VALUE = rowtotal(VALUE1-VALUE7)
+replace VALUE = . if VALUE1 == .
+
+
 preserve
 /******************************************************************
 * 4. （任意）ホライズン別に集計して可視化
@@ -59,7 +67,7 @@ collapse (first) sd* , by(horizon)
 *------------------------------------------------------------
 
 * 1) プロットするウィンドウ長をリスト化
-local wins 1 2 3 4 5 6 7 8 9 10 11 12
+local wins "1 2 3 4"
 
 * 2) twoway の各 connected 文を組み立て
 local plotcmd ""
@@ -96,4 +104,18 @@ twoway `plotcmd', ///
     xlabel(0(1)6)                        ///
     ylabel(, angle(0))
 	
-replace
+restore
+
+sort horizon
+twoway ///
+    (line VALUE horizon, lcolor(black) yaxis(1)) ///
+    (line STDEV horizon, lcolor(red) yaxis(2)), ///
+    title("Forecasts by Horizon") ///
+    xtitle("Horizon") ///
+    ytitle("Forecast Value", axis(1)) ///
+    ytitle("Standard Deviation", axis(2)) ///
+    legend(order(1 "Value" 2 "StDev(summary)"))
+
+
+
+

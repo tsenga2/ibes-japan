@@ -9,6 +9,7 @@ use $mypath/det_history.dta, clear
 keep if CURR_ACT == "JPY"
 keep if CURR == "JPY"
 keep if FPI == "1"
+keep if PDF == "P"
 drop CURR CURR_ACT
 drop if missing(ACTUAL)
 destring FPI, replace force
@@ -32,32 +33,31 @@ gen rownum = _n
 *bysort TICKER FPEDATS ANALYS (ANNDATS): replace change_flag = 1 if _n==1
 
 gen change_flag = 0
-bysort TICKER FPEDATS ANALYS (ANNDATS ANNTIMS): ///
+bysort TICKER FPEDATS ANALYS ESTIMATOR (ANNDATS ANNTIMS): ///
     replace change_flag = 1 if ANNDATS == ANNDATS[1]
 	
-bysort TICKER FPEDATS (ANNDATS ANNTIMS): gen F = sum(change_flag)
+bysort TICKER FPEDATS (ANALYS ESTIMATOR ANNDATS ANNTIMS): gen F = sum(change_flag)
 
 
 rename VALUE forecaster
 reshape wide forecaster, i(rownum) j(F)
 
-foreach v of varlist forecaster1-forecaster34 {
+foreach v of varlist forecaster1-forecaster32 {
     bysort TICKER FPEDATS (ANNDATS ANNTIMS): ///
         replace `v' = `v'[_n-1] if missing(`v')
 }
 
-foreach v of varlist forecaster1-forecaster34 {
+foreach v of varlist forecaster1-forecaster32 {
 	bysort sym eym TICKER: egen `v'_1 = mean(`v')
 	replace `v'= `v'_1
 	drop `v'_1
 }
 
-duplicates drop forecaster1-forecaster34 TICKER FPEDATS, force
-
+duplicates drop forecaster1-forecaster32 TICKER FPEDATS, force
 sort TICKER sym
 
 
-order CNAME sym eym ACTUAL forecaster1-forecaster34
+order CNAME sym eym ACTUAL forecaster1-forecaster32
 
 tempfile data
 save `data', replace
@@ -81,7 +81,7 @@ format eym %tm
 
 merge 1:1 TICKER sym eym using `data'
 
-foreach v of varlist forecaster1-forecaster34 {
+foreach v of varlist forecaster1-forecaster32 {
     bysort TICKER eym (sym): ///
         replace `v' = `v'[_n-1] if missing(`v')
 }
@@ -170,12 +170,12 @@ quietly {
 merge 1:1 TICKER sym eym using `data'
 
 
-foreach v of varlist ACTUAL VALUE1-VALUE7 forecaster1-forecaster34 {
+foreach v of varlist ACTUAL VALUE1-VALUE7 forecaster1-forecaster32 {
      bysort TICKER eym (sym): ///
          replace `v' = `v'[_n-1] if missing(`v')
 }
 
-order TICKER eym sym ACTUAL VALUE1-VALUE7 forecaster1-forecaster34 
+order TICKER eym sym ACTUAL VALUE1-VALUE7 forecaster1-forecaster32 
 
 drop change_flag pdicity_sort group_id1 eym_max rownum
 sort TICKER eym sym

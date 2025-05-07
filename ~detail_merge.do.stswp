@@ -33,10 +33,10 @@ gen rownum = _n
 *bysort TICKER FPEDATS ANALYS (ANNDATS): replace change_flag = 1 if _n==1
 
 gen change_flag = 0
-bysort TICKER FPEDATS ANALYS (ANNDATS ANNTIMS): ///
+bysort TICKER FPEDATS ANALYS ESTIMATOR (ANNDATS ANNTIMS): ///
     replace change_flag = 1 if ANNDATS == ANNDATS[1]
 	
-bysort TICKER FPEDATS (ANNDATS ANNTIMS): gen F = sum(change_flag)
+bysort TICKER FPEDATS (ANALYS ESTIMATOR ANNDATS ANNTIMS): gen F = sum(change_flag)
 
 
 rename VALUE forecaster
@@ -54,7 +54,6 @@ foreach v of varlist forecaster1-forecaster32 {
 }
 
 duplicates drop forecaster1-forecaster32 TICKER FPEDATS, force
-
 sort TICKER sym
 
 

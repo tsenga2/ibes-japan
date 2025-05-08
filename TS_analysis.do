@@ -16,10 +16,10 @@ cap drop year_from_eym
 cap drop year_from_sym
 
 * Calculate standard deviation across all 34 forecasters
-egen dis = rowsd(forecaster1-forecaster34)
+egen dis = rowsd(forecaster1-forecaster32)
 
 * Calculate number of non-missing forecasts
-egen num_forecasts = rownonmiss(forecaster1-forecaster34)
+egen num_forecasts = rownonmiss(forecaster1-forecaster32)
 
 * Order variables
 order TICKER eym sym dis num_forecasts
@@ -112,20 +112,27 @@ use "$mypath/sum_history.dta", clear
 * Drop quarterly forecasts
 drop if FISCALP == "QTR"
 
-* Calculate horizon and year
-gen horizon = (FPEDATS - STATPERS)/(365.25/12)
-gen horizon_round = round(horizon)
-gen year = year(FPEDATS)
+gen syear=year(STATPERS)
+gen sm=month(STATPERS)
+gen sym = ym(syear, sm)
 
-* Calculate average STDEV for each rounded horizon
-bysort TICKER horizon_round: egen avg_STDEV = mean(STDEV)
+gen eyear=year(FPEDATS)
+gen em=month(FPEDATS)
+gen eym = ym(eyear, em)
+
+* Calculate horizon and year
+gen horizon = eym - sym
+
+* Calculate average STDEV for each horizon
+bysort TICKER horizon: egen avg_STDEV = mean(STDEV)
+bysort TICKER horizon: egen avg_numest = mean(NUMEST)
 
 * Plot for selected firms
-twoway (connected avg_STDEV horizon_round if TICKER == "@SUZ", msymbol(O) msize(small)) ///
-       (connected avg_STDEV horizon_round if TICKER == "@NOX", msymbol(D) msize(small)) ///
-       (connected avg_STDEV horizon_round if TICKER == "@M58", msymbol(T) msize(small)) ///
-       (connected avg_STDEV horizon_round if TICKER == "@HIT", msymbol(S) msize(small)) ///
-       (connected avg_STDEV horizon_round if TICKER == "@SET", msymbol(+) msize(small)), ///
+twoway (connected avg_STDEV horizon if TICKER == "@SUZ", msymbol(O) msize(small)) ///
+       (connected avg_STDEV horizon if TICKER == "@NOX", msymbol(D) msize(small)) ///
+       (connected avg_STDEV horizon if TICKER == "@M58", msymbol(T) msize(small)) ///
+       (connected avg_STDEV horizon if TICKER == "@HIT", msymbol(S) msize(small)) ///
+       (connected avg_STDEV horizon if TICKER == "@SET", msymbol(+) msize(small)), ///
        title("IBES Summary") ///
        xtitle("Forecast Horizon (months)") ///
        ytitle("Average Standard Deviation") ///
@@ -134,15 +141,12 @@ twoway (connected avg_STDEV horizon_round if TICKER == "@SUZ", msymbol(O) msize(
        name(summary_disp, replace) ///
        legend(off)
 
-* Calculate average number of estimates for each firm and horizon
-bysort TICKER horizon_round: egen avg_NUMEST = mean(NUMEST)
-
 * Plot number of forecasts for selected firms (Summary)
-twoway (connected avg_NUMEST horizon_round if TICKER == "@SUZ", msymbol(O) msize(small)) ///
-       (connected avg_NUMEST horizon_round if TICKER == "@NOX", msymbol(D) msize(small)) ///
-       (connected avg_NUMEST horizon_round if TICKER == "@M58", msymbol(T) msize(small)) ///
-       (connected avg_NUMEST horizon_round if TICKER == "@HIT", msymbol(S) msize(small)) ///
-       (connected avg_NUMEST horizon_round if TICKER == "@SET", msymbol(+) msize(small)), ///
+twoway (connected avg_numest horizon if TICKER == "@SUZ", msymbol(O) msize(small)) ///
+       (connected avg_numest horizon if TICKER == "@NOX", msymbol(D) msize(small)) ///
+       (connected avg_numest horizon if TICKER == "@M58", msymbol(T) msize(small)) ///
+       (connected avg_numest horizon if TICKER == "@HIT", msymbol(S) msize(small)) ///
+       (connected avg_numest horizon if TICKER == "@SET", msymbol(+) msize(small)), ///
        title("IBES Summary") ///
        xtitle("Forecast Horizon (months)") ///
        ytitle("Average Number of Estimates") ///
@@ -190,43 +194,49 @@ gen year_from_eym = year(dofm(eym))
 gen year_from_sym = year(dofm(sym))
 
 * Calculate dispersion
-egen dis = rowsd(forecaster1-forecaster34)
+egen dis = rowsd(forecaster1-forecaster32)
 winsor2 dis, suffix(_w) cuts(1 99)
 bysort TICKER horizon: egen avg_dis_w = mean(dis_w)
 
 * Plot 2015 detail data
-twoway (connected avg_dis_w horizon if TICKER == "@XJ9" & horizon >= 0 & horizon <= 10 & year_from_sym == 2015, msymbol(O) msize(small)), ///
+twoway (connected avg_dis_w horizon if TICKER == "@XJ9" & horizon >= 0 & horizon <= 10 & year_from_eym == 2015, msymbol(O) msize(small)), ///
        title("IBES Detail") ///
        subtitle("Fast Retailing (2015)") ///
        xtitle("Forecast Horizon (months)") ///
-       ytitle("Average Dispersion") ///
+       ytitle("Dispersion") ///
        xlabel(0(1)10, angle(45)) ///
-       ylabel(, angle(0)) ///
-       name(detail, replace) ///
+       ylabel(15(5)45, angle(0)) ///
+       name(detail_disp, replace) ///
        legend(off)
 
 * Summary data for 2015
 use "$mypath/sum_history.dta", clear
 drop if FISCALP == "QTR"
-gen horizon = (FPEDATS - STATPERS)/(365.25/12)
-gen horizon_round = round(horizon)
-gen year = year(FPEDATS)
 
-bysort TICKER horizon_round: egen avg_STDEV = mean(STDEV)
+gen syear=year(STATPERS)
+gen sm=month(STATPERS)
+gen sym = ym(syear, sm)
+
+gen eyear=year(FPEDATS)
+gen em=month(FPEDATS)
+gen eym = ym(eyear, em)
+
+gen horizon = eym - sym
 
 * Plot 2015 summary data
-twoway (connected avg_STDEV horizon_round if TICKER == "@XJ9" & horizon_round >= 0 & horizon_round <= 10 & year == 2015, msymbol(O) msize(small)), ///
+twoway (connected STDEV horizon if TICKER == "@XJ9" & horizon >= 0 & horizon <= 10 & eyear == 2015, ///
+       msymbol(O) msize(small)), ///
        title("IBES Summary") ///
        subtitle("Fast Retailing (2015)") ///
        xtitle("Forecast Horizon (months)") ///
-       ytitle("Average Standard Deviation") ///
+       ytitle("Standard Deviation") ///
        xlabel(0(1)10, angle(45)) ///
-       ylabel(0(5)35) ///
-       name(summary, replace) ///
+       ylabel(15(5)45) ///
+       name(summary_disp, replace) ///
        legend(off)
 
 * Combine 2015 plots
-graph combine detail summary, ///
+graph combine detail_disp summary_disp, ///
        title("Comparison of Forecast Dispersion by Horizon") ///
        subtitle("Fast Retailing: IBES Detail vs Summary (2015)") ///
        rows(1)
@@ -245,15 +255,14 @@ cap drop avg_num_f
 gen horizon = eym - sym
 gen year_from_eym = year(dofm(eym))
 gen year_from_sym = year(dofm(sym))
-egen num_forecasts = rownonmiss(forecaster1-forecaster34)
-bysort TICKER horizon: egen avg_num_f = mean(num_forecasts)
+egen num_forecasts = rownonmiss(forecaster1-forecaster32)
 
 * Plot 2015 detail forecasts
-twoway (connected avg_num_f horizon if TICKER == "@XJ9" & horizon >= 0 & horizon <= 10 & year_from_sym == 2015, msymbol(O) msize(small)), ///
+twoway (connected num_forecasts horizon if TICKER == "@XJ9" & horizon >= 0 & horizon <= 10 & year_from_eym == 2015, msymbol(O) msize(small)), ///
        title("IBES Detail") ///
        subtitle("Fast Retailing (2015)") ///
        xtitle("Forecast Horizon (months)") ///
-       ytitle("Average Number of Forecasts") ///
+       ytitle("Number of Forecasts") ///
        xlabel(0(1)10, angle(45)) ///
        ylabel(, angle(0)) ///
        name(detail_numf, replace) ///
@@ -262,28 +271,32 @@ twoway (connected avg_num_f horizon if TICKER == "@XJ9" & horizon >= 0 & horizon
 * Summary data forecasts for 2015
 use "$mypath/sum_history.dta", clear
 drop if FISCALP == "QTR"
-gen horizon = (FPEDATS - STATPERS)/(365.25/12)
-gen horizon_round = round(horizon)
-gen year = year(FPEDATS)
-bysort horizon_round: egen avg_NUMEST = mean(NUMEST)
+
+gen syear=year(STATPERS)
+gen sm=month(STATPERS)
+gen sym = ym(syear, sm)
+
+gen eyear=year(FPEDATS)
+gen em=month(FPEDATS)
+gen eym = ym(eyear, em)
+gen horizon = eym - sym
+
 
 * Plot 2015 summary forecasts
-twoway (connected avg_NUMEST horizon_round if TICKER == "@XJ9" & horizon_round >= 0 & horizon_round <= 10 & year == 2015, msymbol(O) msize(small)), ///
+twoway (connected NUMEST horizon if TICKER == "@XJ9" & horizon >= 0 & horizon <= 10 & eyear == 2015, msymbol(O) msize(small)), ///
        title("IBES Summary") ///
        subtitle("Fast Retailing (2015)") ///
        xtitle("Forecast Horizon (months)") ///
-       ytitle("Average Number of Estimates") ///
+       ytitle("Number of Estimates") ///
        xlabel(0(1)10, angle(45)) ///
        ylabel(, angle(0)) ///
        name(summary_numf, replace) ///
        legend(off)
 
+
 * Combine 2015 forecast plots
-graph combine detail_numf summary_numf, ///
+graph combine detail_disp summary_disp detail_numf summary_numf, ///
        title("Comparison of Number of Forecasts by Horizon") ///
        subtitle("Fast Retailing: IBES Detail vs Summary (2015)") ///
-       rows(1)
-graph export "$mypath/fast_retailing_numf_comparison_2015.png", replace
-
-
-
+       rows(2) cols(2)
+graph export "$mypath/fast_retailing_comparison_2015_full.png", replace

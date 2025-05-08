@@ -264,7 +264,7 @@ twoway (connected num_forecasts horizon if TICKER == "@XJ9" & horizon >= 0 & hor
        xtitle("Forecast Horizon (months)") ///
        ytitle("Number of Forecasts") ///
        xlabel(0(1)10, angle(45)) ///
-       ylabel(, angle(0)) ///
+       ylabel(10(4)25, angle(0)) ///
        name(detail_numf, replace) ///
        legend(off)
 
@@ -289,7 +289,7 @@ twoway (connected NUMEST horizon if TICKER == "@XJ9" & horizon >= 0 & horizon <=
        xtitle("Forecast Horizon (months)") ///
        ytitle("Number of Estimates") ///
        xlabel(0(1)10, angle(45)) ///
-       ylabel(, angle(0)) ///
+       ylabel(10(4)25, angle(0)) ///
        name(summary_numf, replace) ///
        legend(off)
 

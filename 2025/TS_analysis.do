@@ -1,7 +1,7 @@
 clear all
 
-*global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan/IBES/Both"
-global mypath "/Users/tsenga/ibes-japan/ibes-japan/IBES/Both"
+global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan/IBES/Both"
+*global mypath "/Users/tsenga/ibes-japan/ibes-japan/IBES/Both"
 
 ***********************************
 * PART 1: DETAIL DATA ANALYSIS

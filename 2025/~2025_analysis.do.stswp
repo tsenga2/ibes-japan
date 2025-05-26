@@ -7,7 +7,6 @@ use $mypath/merged_data.dta, clear
 **********************************************************************/
 
 *--- データ読込 -------------------------------------------------------
-use "$mypath/merged_data.dta", clear
 keep if inlist(CURR_ACT, "USD", "JPY", "EUR","CAD","CNY","BPN")
 
 *--- 年次設定----

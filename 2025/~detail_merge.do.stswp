@@ -179,6 +179,8 @@ order TICKER eym sym ACTUAL VALUE* forecaster*
 drop change_flag pdicity_sort group_id1 eym_max rownum
 sort TICKER eym sym
 
+sort TICKER eym
+
 forvalues i = 1/112 {
     capture drop flag_forecaster`i'
     gen flag_forecaster`i' = .

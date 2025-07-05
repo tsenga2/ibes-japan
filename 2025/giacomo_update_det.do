@@ -1,4 +1,4 @@
-/*********************************************************************
+これで作ってるdisagreement(=stdev)、genじゃなくて、元々データセットにSTDEV列あるからそれを使うように書き換えて：/*********************************************************************
 * 0. 初期設定
 *********************************************************************/
 
@@ -49,7 +49,7 @@ program define build_xlabel, rclass
 end
 
 /*********************************************************************
-* 3. 通貨ループ：Disagreement & RMSE（All vs Updated）
+* 3. 通貨ループ：Disagreement & RMSE（Updated 定義で統一）
 *********************************************************************/
 
 local curlist USD JPY EUR CAD CNY BPN
@@ -61,81 +61,57 @@ foreach cur of local curlist {
     preserve
     keep if CURR_ACT=="`cur'" & inrange(syear,2014,2024) & inrange(horizon,0,10)
 
-    /* 3-1. 行単位で All／Updated を集計 */
-    gen double count_a = 0     // All forecasts
-    gen double sqerr_a = 0
-    gen double count_u = 0     // Updated forecasts
-    gen double sqerr_u = 0
-    gen double sum_u   = 0
-    gen double sumsqs_u = 0
+    /* 3-1. 行単位で Updated 予測だけ集計 */
+    gen double sum_u     = 0
+    gen double count_u   = 0
+    gen double sumsqs_u  = 0
+    gen double sqerr_u   = 0        // ← RMSE 用
 
     forvalues i = 1/112 {
-        /* --- All forecasts --- */
-        quietly replace count_a = count_a + 1                        ///
-            if !missing(forecaster`i')
-        quietly replace sqerr_a = sqerr_a +                          ///
-            ((forecaster`i'-ACTUAL)/ACTUAL)^2                        ///
-            if !missing(forecaster`i')
-
-        /* --- Updated forecasts only --- */
-        quietly replace count_u = count_u + 1                        ///
+        quietly replace sum_u     = sum_u   + forecaster`i'            ///
             if flag_forecaster`i'==1 & !missing(forecaster`i')
-        quietly replace sum_u   = sum_u   + forecaster`i'            ///
+        quietly replace count_u   = count_u + 1                        ///
             if flag_forecaster`i'==1 & !missing(forecaster`i')
-        quietly replace sumsqs_u = sumsqs_u + forecaster`i'^2        ///
+        quietly replace sumsqs_u  = sumsqs_u+ forecaster`i'^2          ///
             if flag_forecaster`i'==1 & !missing(forecaster`i')
-        quietly replace sqerr_u = sqerr_u +                          ///
-            ((forecaster`i'-ACTUAL)/ACTUAL)^2                        ///
+        quietly replace sqerr_u   = sqerr_u +                          ///
+            ((forecaster`i'-ACTUAL)/ACTUAL)^2                          ///
             if flag_forecaster`i'==1 & !missing(forecaster`i')
     }
 
-    /* 3-2. Disagreement (stdev) & RMSE 各バージョンを作成 */
-    gen stdev_all = STDEV                                            if count_a>=2   // データセット既存列
-    gen stdev_u   = sqrt((sumsqs_u - (sum_u^2)/count_u)/(count_u-1)) if count_u>=2
-
-    gen rmse_all  = sqrt(sqerr_a / count_a)                          if count_a>=2
-    gen rmse_u    = sqrt(sqerr_u / count_u)                          if count_u>=2
+    /* 3-2. "Disagreement"=Updated 予測だけの stdev */
+    gen stdev = sqrt((sumsqs_u - (sum_u^2)/count_u)/(count_u-1)) if count_u>=2
+    gen rmse  = sqrt(sqerr_u / count_u)                           if count_u>=2
 
     /* 3-3. Winsorize → 年×horizon 平均 */
-    winsor2 stdev_all stdev_u rmse_all rmse_u, suffix(_w) cuts(10 90)
-    collapse (mean)                                                  ///
-        stdev_all = stdev_all_w stdev_u = stdev_u_w                 ///
-        rmse_all  = rmse_all_w  rmse_u = rmse_u_w,                  ///
-        by(syear horizon)
+    winsor2 stdev rmse, suffix(_w) cuts(10 90)
+    collapse (mean) stdev = stdev_w rmse = rmse_w, by(syear horizon)
 
     /* 3-4. 横軸生成 & xlabel */
     make_xpos
     quietly build_xlabel
     local xlabel "`r(xlabel)'"
 
-    /* 3-5. twoway コマンド（黒＝All, 赤＝Updated）*/
+    /* 3-5. twoway コマンド */
     local cmd_stdev ""
     local cmd_rmse  ""
     levelsof syear, local(yrs)
     foreach y of local yrs {
-        /* Disagreement */
         local cmd_stdev `cmd_stdev' ///
-            (line stdev_all xpos if syear==`y', sort              ///
-                   lcolor(black) lwidth(med))                    ///
-            (line stdev_u   xpos if syear==`y', sort              ///
-                   lcolor(red)   lwidth(med))
-        /* RMSE */
-        local cmd_rmse `cmd_rmse' ///
-            (line rmse_all xpos if syear==`y', sort               ///
-                   lcolor(black) lwidth(med))                    ///
-            (line rmse_u   xpos if syear==`y', sort               ///
-                   lcolor(red)   lwidth(med))
+            (line stdev xpos if syear==`y', sort lcolor(black) lwidth(med))
+        local cmd_rmse  `cmd_rmse'  ///
+            (line rmse  xpos if syear==`y', sort lcolor(black) lwidth(med))
     }
 
     /* 3-6. Panel A（Disagreement）*/
-    twoway `cmd_stdev', xlabel(`xlabel') xtitle("Year")             ///
-        ytitle("Disagreement (stdev)") legend(off)                 ///
+    twoway `cmd_stdev', xlabel(`xlabel') xtitle("Year") ///
+        ytitle("Disagreement (stdev, updated)") legend(off) ///
         title("`cur'") name(gA_`cur', replace)
     local graphsA "`graphsA' gA_`cur'"
 
     /* 3-7. Panel B（RMSE）*/
-    twoway `cmd_rmse',  xlabel(`xlabel') xtitle("Year")             ///
-        ytitle("RMSE (percent)") legend(off)                       ///
+    twoway `cmd_rmse',  xlabel(`xlabel') xtitle("Year") ///
+        ytitle("RMSE (percent, updated)") legend(off) ///
         title("`cur'") name(gB_`cur', replace)
     local graphsB "`graphsB' gB_`cur'"
 
@@ -144,19 +120,35 @@ foreach cur of local curlist {
 
 
 /*********************************************************************
-* 4. Panel A 結合（レジェンドなし）
+* 4. Panel A 結合（レジェンドなし）＋小レジェンド作成
 *********************************************************************/
 
-graph combine `graphsA', cols(3) imargin(vtiny)                      ///
-    title("Panel A: Disagreement (All vs Updated, 2014–2024)")       ///
+graph combine `graphsA', cols(3) imargin(vtiny) ///
+    title("Panel A: Disagreement (All vs Updated, 2001–2024)") ///
     name(panelA_main, replace)
 graph export "panelA_disagreement_overlay.png", width(2400) replace
 
+/* 共通レジェンドだけの小さなグラフ */
+clear
+set obs 2
+gen x = _n
+gen y = x
+
+twoway ///
+    (line y x if x==1, lcolor(black) lwidth(med)) ///
+    (line y x if x==2, lcolor(red)   lwidth(med) lpattern(dash)), ///
+    legend(order(1 "All forecasts" 2 "Updated forecasts") ///
+           size(small) row(1)) ///
+    xtitle("") ytitle("") xlabel("") ylabel("") title("") ///
+    plotregion(margin(zero)) graphregion(color(white)) ///
+    name(panelA_legend, replace)
+graph export "panelA_disagreement_legend.png", width(800) replace
+
 /*********************************************************************
-* 5. Panel B 結合（レジェンドなし）
+* 5. Panel B 結合（レジェンド付き）
 *********************************************************************/
 
-graph combine `graphsB', cols(3) imargin(vtiny)                      ///
-    title("Panel B: RMSE (All vs Updated, 2014–2024)")               ///
+graph combine `graphsB', cols(3) imargin(vtiny) ///
+    title("Panel B: RMSE (All vs Updated, 2001–2024)") ///
     name(panelB_main, replace)
 graph export "panelB_rmse_overlay.png", width(2400) replace

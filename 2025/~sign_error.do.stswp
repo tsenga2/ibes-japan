@@ -1,0 +1,68 @@
+clear
+set more off
+global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan/IBES/Both"
+                               */
+use $mypath/merged_data.dta, clear
+
+gen horizon = eym - sym  
+
+keep if CURR_ACT == "JPY"
+
+* 1. 行平均（forecaster1–112 の平均）を作成　　
+egen mean_fcst = rowmean(forecaster*)
+egen stdev_fcst = rowsd(forecaster*)
+
+* 2. 誤差列（ACTUAL − 平均予想）を作成
+gen  error = (ACTUAL - mean_fcst)/ACTUAL
+label var error "ACTUAL minus mean(forecaster*)"
+
+* 基本のヒストグラム
+winsor2 error stdev_fcst, suffix(_w) cuts(1 99)
+histogram error_w, bin(30) normal ///
+    title("Distribution of forecast error") ///
+    xtitle("Error = ACTUAL − mean(forecaster*)/ACTUAL") ///
+    ytitle("Frequency")
+*--------------------------------------------------------------*
+*  散布図：error  vs.  n_fcst
+*--------------------------------------------------------------*
+binscatter error_w n_fcst,           ///
+    nquantiles(20)                   /// ← 20 分位ビン（警告は無視して大丈夫）
+    median                           /// ビンごとの中央値を点で描く
+    ///
+    title("Forecast error vs. number of forecasters") ///
+    xtitle("n_fcst  (max per {TICKER, eym})")        ///
+    ytitle("Winsorized error (error_w)")             ///
+    legend(off)
+
+	tempname plots
+local plots ""
+
+* horizon の取り得る値を列挙（0–10 で欠損なら飛ばす）
+*--- horizon を 0–10 に絞る ----------------------------------------*
+keep if inrange(horizon,0,10)
+
+*--- ループで 11 枚描く -------------------------------------------*
+local plots ""                     // ← graph combine 用リスト
+
+forvalues h = 0/10 {               // 0 1 2 … 10
+
+    twoway (scatter error stdev_fcst if horizon==`h', ///
+                msize(vsmall) mcolor(%30) jitter(1)       ///
+           ) ,                        ///
+           title("horizon = `h'")     ///
+           xtitle("stdev_fcst_w  (row SD, winsorized)")   ///
+           ytitle("error_w  (ACTUAL − mean(forecaster*) / ACTUAL)") ///
+           legend(off) name(g_h`h', replace)   // ← g_h0, g_h1, … g_h10
+
+    local plots "`plots' g_h`h'"
+}
+
+*--- 3 列に並べて 1 枚へ -----------------------------------------*
+graph combine `plots', cols(3) imargin(vtiny) ///
+    title("Scatter: error_w vs. stdev_fcst_w by horizon (JPY only)") ///
+    name(panel_scatter, replace)
+
+graph export "scatter_error_vs_sd_by_horizon.png", width(2400) replace
+
+
+

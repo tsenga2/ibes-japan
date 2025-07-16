@@ -199,7 +199,8 @@ forvalues i = 1/112 {
 
 foreach i of numlist 1/112 {
     bysort TICKER eym: egen updcount`i' = total(flag_forecaster`i'), missing
-    gen byte flag_u3_`i' = flag_forecaster`i'==1 & updcount`i' >= 3
+    gen byte flag_u3_`i' = updcount`i' >= 3
+	gen byte flag_u4_`i' = updcount`i' >= 4
 }
 
 *****************************************************

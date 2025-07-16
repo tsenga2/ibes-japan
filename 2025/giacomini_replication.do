@@ -3,7 +3,7 @@
 **************************************************************
 clear
 global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan/IBES/Both"
-*global mypath "/Users/tsenga/ibes-japan/ibes-japan/IBES/international"
+global mypath "/Users/tsenga/ibes-japan/ibes-japan/IBES/Both"
 use $mypath/merged_data.dta, clear
 
 **************************************************************
@@ -23,7 +23,7 @@ foreach cur of local curlist {
     
     * --- 2-1. データ絞り込み ---
     keep if CURR_ACT == "`cur'" ///
-        & inrange(syear, 2014, 2024) ///
+        & inrange(syear, 2001, 2024) ///
         & inrange(horizon, 0, 10)
 
     * --- 2-2. Panel A 用：STDEV（Disagreement） ---
@@ -38,7 +38,7 @@ foreach cur of local curlist {
 
     * --- 2-3. Panel B 用：RMSE%（Forecast Error） ---
     keep if CURR_ACT == "`cur'" ///
-        & inrange(syear, 2014, 2024) ///
+        & inrange(syear, 2001, 2024) ///
         & inrange(horizon, 0, 10)
 
     gen sq_sum = 0
@@ -64,6 +64,7 @@ foreach cur of local curlist {
 **************************************************************
 * 3. 各通貨ごとのグラフ作成（AとB 両方）
 **************************************************************
+
 foreach cur of local curlist {
     
     * --- 3-1. Panel A ---
@@ -141,9 +142,74 @@ foreach cur of local curlist {
 * 4. Panel A & B を組み合わせて描画・保存
 **************************************************************
 graph combine gA_USD gA_JPY gA_EUR gA_CAD gA_CNY gA_BPN, ///
-    cols(3) title("Panel A: Disagreement by Horizon and Year (2014–2024)")
+    cols(3) title("Panel A: Disagreement by Horizon and Year (2008–2024)")
 graph export "panelA_disagreement.png", width(2400) replace
 
 graph combine gB_USD gB_JPY gB_EUR gB_CAD gB_CNY gB_BPN, ///
-    cols(3) title("Panel B: Forecast Error (RMSE%) by Horizon and Year (2014–2024)")
+    cols(3) title("Panel B: Forecast Error (RMSE%) by Horizon and Year (2008–2024)")
 graph export "panelB_rmse.png", width(2400) replace
+
+    /**********************************************************
+    * --- 2-4. Panel C 用：平均 Forecast（All vs Updated） ---
+    **********************************************************/
+	use $mypath/merged_data.dta, clear
+gen horizon = eym - sym
+    preserve
+    
+    * ---- データ絞り込み（通貨・年・horizon） ----
+    keep if CURR_ACT == "`cur'" ///
+        & inrange(syear, 2001, 2024) ///
+        & inrange(horizon, 0, 10)
+    
+    * ---- wide → long へ変換 ----
+    gen long rowid = _n
+    reshape long forecaster flag_forecaster, i(rowid) j(num)  // ← 112×長くなる
+    
+    * ---- 全体平均とアップデート平均を計算 ----
+    * （1）全体
+    collapse (mean) mean_all = forecaster, by(syear horizon eym)      // 一度保存
+    tempfile _all
+    save "`_all'", replace
+
+    * （2）アップデート済みだけ
+    keep if flag_forecaster == 1
+    collapse (mean) mean_upd = forecaster, by(syear horizon eym)
+
+    * ---- 2 本の系列を merge ----
+    merge 1:1 syear horizon eym using "`_all'", nogen
+    
+    * ---- Panel C 用の xpos（横軸） ----
+    gen xpos = .
+    local base = 1
+    levelsof syear, local(years)   // 2001‐2024 に存在する年だけ
+    foreach y of local years {
+        replace xpos = `base' + (10 - horizon) if syear == `y'
+        local base = `base' + 11
+    }
+    
+    * ---- xlabel と legend 用のローカル ----
+    local xlabelspec
+    foreach y of local years {
+        * 年ごとの真ん中（horizon==5）の xpos を拾う
+        quietly summarize xpos if syear == `y' & horizon == 5
+        local xpos_mid = r(mean)
+        local xlabelspec `xlabelspec' `xpos_mid' "`y'"
+    }
+    
+    * ---- グラフ描画 ----
+    twoway                                                       ///
+        (line mean_all xpos, sort lcolor(black)   lwidth(med))   ///
+        (line mean_upd xpos, sort lcolor(red)     lwidth(med) lpattern(dash)), ///
+        xlabel(`xlabelspec', labsize(small) angle(0))            ///
+        xtitle("Year") ytitle("Average forecast")                ///
+        legend(order(1 "All forecasts" 2 "Updated forecasts"))   ///
+        title("`cur'", size(medium))                             ///
+        graphregion(color(white)) plotregion(style(none))        ///
+        name(gC_`cur', replace)
+
+    restore
+
+graph combine gC_USD gC_JPY gC_EUR gC_CAD gC_CNY gC_BPN, ///
+    cols(3) title("Panel C: Average Forecast (All vs Updated, 2001–2024)")
+graph export "panelC_avgforecast.png", width(2400) replace
+

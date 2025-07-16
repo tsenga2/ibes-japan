@@ -199,7 +199,7 @@ forvalues i = 1/112 {
 
 foreach i of numlist 1/112 {
     bysort TICKER eym: egen updcount`i' = total(flag_forecaster`i'), missing
-    gen byte flag_u3_`i' = flag_forecaster`i'==1 & updcount`i' >= 3
+    gen byte flag_u4_`i' = updcount`i' >= 4
 }
 
 *****************************************************
@@ -246,6 +246,9 @@ egen n_fcst_row = rownonmiss(forecaster*)   // 0–112
  *--------------------------------------------------------------*/
 bysort TICKER eym: egen n_fcst = max(n_fcst_row)   // ← ここがポイント
 label var n_fcst "Max # of forecasters in {TICKER, eym}"
+
+drop _merge
+merge m:m OFTIC using "$mypath/ibes_summary_identif.dta"
 
 
 save "$mypath/merged_data.dta", replace

@@ -1,6 +1,7 @@
 cls
 clear all
 set graph on
+set maxvar 10000
 
 global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan/IBES/Both"
 global mypath "/Users/tsenga/ibes-japan/ibes-japan/IBES/Both"
@@ -196,11 +197,11 @@ forvalues i = 1/112 {
     * lag列を削除
     drop lag`i'
 }
-drop updcount* flag_u
+*drop updcount* flag_u
 foreach i of numlist 1/112 {
     bysort TICKER eym: egen updcount`i' = total(flag_forecaster`i'), missing
     gen byte flag_u3_`i' = (updcount`i' >= 3 & updcount`i' < .)
-	gen gen byte flag_u4_`i' = (updcount`i' >= 4 & updcount`i' < .)
+	gen byte flag_u4_`i' = (updcount`i' >= 4 & updcount`i' < .)
 }
 
 *****************************************************

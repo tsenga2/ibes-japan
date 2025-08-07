@@ -1,6 +1,16 @@
 clear
 set more off
-global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan/IBES/Both"
+* Set path based on current user
+if c(username) == "kawabatahatsu" {
+    global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan/IBES/Both"
+}
+else if c(username) == "tsenga" {
+    global mypath "/Users/tsenga/ibes-japan/ibes-japan/IBES/Both"
+}
+else {
+    display as error "Unknown user. Please set the correct path manually."
+    exit
+}
 use $mypath/merged_data.dta, clear
 
 gen horizon = eym - sym

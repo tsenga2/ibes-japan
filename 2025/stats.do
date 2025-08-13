@@ -57,16 +57,18 @@ replace rmse_u4 = sqrt(`se_sum' / `count') if `count' >= 1
 
 drop `sum_x' `sum_x2' `count' `se_sum'
 
-* collapse用に企業ID保持
-gen firm = TICKER
+* TICKER × eym 単位で中間集計（★ACTUALも保持）
+* ACTUALはTICKER×eym内で同一想定なので(mean)で持ってくる
+collapse (mean) ACTUAL over4 total forecaster_count disagreement_u4 rmse_u4 ///
+        (first) COUNTRY eyear, by(TICKER eym)
 
-* TICKER × eym 単位で中間集計
-collapse (mean) over4 total forecaster_count disagreement_u4 rmse_u4 (first) COUNTRY eyear, by(TICKER eym)
+* 中間結果を保存（TICKER×eym粒度：ACTUAL含む）
+export delimited using "$mypath/stats_firm.csv", replace
 
+* この後、従来どおりCOUNTRY×eyearへ集計
 gen ratio = over4 / total
 gen one = 1
 
-* 最終集計：COUNTRY × eyear ごと
 collapse ///
     (mean) ratio ///
     (mean) forecaster_count ///
@@ -82,8 +84,11 @@ rename total total_total
 rename disagreement_u4 disagreement_u4_avg
 rename rmse_u4 rmse_u4_avg
 
-* 出力（CSV）
+* 出力（COUNTRY×eyear）
 export delimited using "$mypath/stats.csv", replace
 
 * 確認表示
-list COUNTRY eyear ratio forecaster_count firm_count over4_total total_total disagreement_u4_avg rmse_u4_avg, noobs
+list COUNTRY eyear ratio forecaster_count firm_count over4_total total_total ///
+     disagreement_u4_avg rmse_u4_avg, noobs
+
+restore

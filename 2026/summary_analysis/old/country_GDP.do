@@ -2,7 +2,7 @@ clear all
 set more off
 set graphics off
 
-global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan/IBES"
+global mypath "~/Library/CloudStorage/Dropbox/IBES"
 *============================================================*
 * shrinkage 定義ループ（フォルダ名＝計算方法）
 *============================================================*

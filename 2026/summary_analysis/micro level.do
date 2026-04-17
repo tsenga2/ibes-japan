@@ -4,7 +4,7 @@ set more off
 *=============================*
 * Load shrinkage results
 *=============================*
-global mypath "/Users/hatsu/ibes-japan/ibes-japan/IBES"
+global mypath "~/Library/CloudStorage/Dropbox/IBES"
 use "$mypath/Both/sum_history.dta", clear
 
 gen int pred_year = year(STATPERS)
@@ -130,6 +130,6 @@ foreach y of local yvars {
         ytitle("`y'") ///
         xtitle("Actual_0")
 
-    graph export "/Users/hatsu/ibes-japan/ibes-japan/2026/summary_analysis/graph/micro level scatter/`y'_vs_Actual_0.png", replace
+    graph export "~/ibes-japan/2026/summary_analysis/graph/micro level scatter/`y'_vs_Actual_0.png", replace
 }
 

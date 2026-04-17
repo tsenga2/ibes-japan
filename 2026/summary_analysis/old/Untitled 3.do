@@ -13,7 +13,7 @@ set graphics off
 *=============================*
 * Path
 *=============================*
-global mypath "/Users/hatsu/ibes-japan/ibes-japan/IBES"
+global mypath "~/Library/CloudStorage/Dropbox/IBES"
 local graphroot "$mypath/graphs"
 
 *=============================*

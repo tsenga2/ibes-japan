@@ -1,6 +1,6 @@
 clear all
 
-global mypath "/Users/hatsu/ibes-japan/ibes-japan/IBES"
+global mypath "~/Library/CloudStorage/Dropbox/IBES"
 
 use "$mypath/outputs/shrinkage_all_specs_FDI_pwt.dta", clear
 drop _merge

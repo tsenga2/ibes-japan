@@ -3,7 +3,7 @@ set more off
 set graphics off
 
 *--- 0) パス設定
-global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan/IBES"
+global mypath "~/Library/CloudStorage/Dropbox/IBES"
 global outdir "$mypath/graphs" 
 
 

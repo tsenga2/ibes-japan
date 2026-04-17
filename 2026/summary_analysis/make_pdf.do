@@ -10,7 +10,7 @@ set more off
 *------------------------------------------------------------------------------
 * Load data
 *------------------------------------------------------------------------------
-global mypath "/Users/hatsu/ibes-japan/ibes-japan/IBES"
+global mypath "~/Library/CloudStorage/Dropbox/IBES"
 use "$mypath/outputs/shrinkage_all_specs_FDI_pwt_stock.dta", clear
 
 *------------------------------------------------------------------------------
@@ -172,7 +172,7 @@ foreach y of local y_vars {
             subtitle("Left: `x1' | Right: `x2'", size(small))
 
         graph export ///
-            "/Users/hatsu/ibes-japan/ibes-japan/2026/summary_analysis/graph/scatter_`ysafe'_page`page'.png", ///
+            "~/ibes-japan/2026/summary_analysis/graph/scatter_`ysafe'_page`page'.png", ///
             replace width(1600)
 
         local ++page

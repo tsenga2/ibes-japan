@@ -2,7 +2,7 @@ clear all
 set more off
 set graphics off
 
-global mypath "/Users/hatsu/ibes-japan/ibes-japan/IBES"
+global mypath "~/Library/CloudStorage/Dropbox/IBES"
 
 *============================================================*
 * shrinkage（GDP 版方式）を一度だけ作るループ

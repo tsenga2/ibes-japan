@@ -5,7 +5,7 @@
 clear
 set more off
 global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan/IBES/Both"
-// global mypath "/Users/tsenga/ibes-japan/ibes-japan/IBES/international"
+// global mypath "/Users/tsenga/ibes-japan/IBES/international"
 
 /* winsor2 が未導入なら：  ssc install winsor2, replace */
 

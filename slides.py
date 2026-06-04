@@ -3,8 +3,8 @@ import pyperclip
 
 # Get a list of all PNG files in the Graph directory
 #graph_dir = "/Users/kawabatahatsu/Desktop/ra/IBES/international/graph"
-graph_dir = "/Users/tsenga/ibes-japan/ibes-japan/graph"
-table_dir = "/Users/tsenga/ibes-japan/ibes-japan/table"
+graph_dir = "/Users/tsenga/ibes-japan/graph"
+table_dir = "/Users/tsenga/ibes-japan/table"
 
 # List all PNG and text files
 png_files = sorted([f for f in os.listdir(graph_dir) if f.endswith('.png')])

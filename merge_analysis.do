@@ -3,7 +3,7 @@ clear all
 set graph off
 
 global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan"
-*global mypath "/Users/tsenga/ibes-japan/ibes-japan"
+*global mypath "/Users/tsenga/ibes-japan"
 use $mypath/merged.dta, clear
 
 capture mkdir $mypath/graph 

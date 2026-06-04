@@ -3,7 +3,7 @@ clear all
 set graph on
 
 global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan/IBES/Both"
-*global mypath "/Users/tsenga/ibes-japan/ibes-japan/IBES/international"
+*global mypath "/Users/tsenga/ibes-japan/IBES/international"
 use $mypath/det_history.dta, clear
 
 keep if CURR == "JPY"

@@ -4,7 +4,7 @@ set more off
 
 
 global data_path "/Users/kawabatahatsu/ibes-japan/ibes-japan"
-*global data_path "/Users/tsenga/ibes-japan/ibes-japan"
+*global data_path "/Users/tsenga/ibes-japan"
 import delimited "$data_path/renketsu.csv", clear
 
 generate date = date(ap, "YM")

@@ -1,6 +1,6 @@
 clear
 global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan/IBES/Both"
-*global mypath "/Users/tsenga/ibes-japan/ibes-japan/IBES/international"
+*global mypath "/Users/tsenga/ibes-japan/IBES/international"
 use $mypath/merged_data.dta, clear
 /**********************************************************************
 * 事前設定

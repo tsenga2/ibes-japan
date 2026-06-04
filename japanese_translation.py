@@ -9,7 +9,7 @@ def create_directory(directory_path):
         print(f"Directory '{directory_path}' already exists. Skipping creation.")
 
 #mypath =  '/Users/kawabatahatsu/ibes-japan/ibes-japan/japanese_table'
-mypath =  '/Users/tsenga/ibes-japan/ibes-japan/table'
+mypath =  '/Users/tsenga/ibes-japan/table'
 create_directory(mypath)
 
 #Translating and saving the files
@@ -32,7 +32,7 @@ def replace_words_in_tex(input_path, output_dir, replacements):
 
 #desc_stats_a.tex
 #input_path = '/Users/kawabatahatsu/ibes-japan/ibes-japan/table/desc_stats_a.tex'
-input_path = '/Users/tsenga/ibes-japan/ibes-japan/table/desc_stats_a.tex'
+input_path = '/Users/tsenga/ibes-japan/table/desc_stats_a.tex'
 output_dir = mypath
 replacements = {
     'mean': '平均',
@@ -49,7 +49,7 @@ replace_words_in_tex(input_path, output_dir, replacements)
 
 #desc_stats_b
 #input_path = '/Users/kawabatahatsu/ibes-japan/ibes-japan/table/desc_stats_b.tex'
-input_path = '/Users/tsenga/ibes-japan/ibes-japan/table/desc_stats_b.tex'
+input_path = '/Users/tsenga/ibes-japan/table/desc_stats_b.tex'
 output_dir = mypath
 replacements = {
     'mean': '平均',
@@ -68,7 +68,7 @@ replace_words_in_tex(input_path, output_dir, replacements)
 
 #reg_T01
 #input_path = '/Users/kawabatahatsu/ibes-japan/ibes-japan/table/reg_T01.tex'
-input_path = '/Users/tsenga/ibes-japan/ibes-japan/table/reg_T01.tex'
+input_path = '/Users/tsenga/ibes-japan/table/reg_T01.tex'
 output_dir = mypath
 replacements = {
     '(mean) NUMEST': 'アナリスト数',
@@ -84,7 +84,7 @@ replace_words_in_tex(input_path, output_dir, replacements)
 
 #reg_T02
 #input_path = '/Users/kawabatahatsu/ibes-japan/ibes-japan/table/reg_T02.tex'
-input_path = '/Users/tsenga/ibes-japan/ibes-japan/table/reg_T02.tex'
+input_path = '/Users/tsenga/ibes-japan/table/reg_T02.tex'
 output_dir = mypath
 replacements = {
     '(mean) NUMEST': 'アナリスト数',
@@ -100,7 +100,7 @@ replace_words_in_tex(input_path, output_dir, replacements)
 
 #reg_T02
 #input_path = '/Users/kawabatahatsu/ibes-japan/ibes-japan/table/reg_T02.tex'
-input_path = '/Users/tsenga/ibes-japan/ibes-japan/table/reg_T02.tex'
+input_path = '/Users/tsenga/ibes-japan/table/reg_T02.tex'
 output_dir = mypath
 replacements = {
     '(mean) ACTUAL': 'EPS実現値',
@@ -116,7 +116,7 @@ replace_words_in_tex(input_path, output_dir, replacements)
 
 #cross_correlation
 #input_path = '/Users/kawabatahatsu/ibes-japan/ibes-japan/table/cross_correlation.tex'
-input_path = '/Users/tsenga/ibes-japan/ibes-japan/table/cross_correlation.tex'
+input_path = '/Users/tsenga/ibes-japan/table/cross_correlation.tex'
 output_dir = mypath
 replacements = {
     'Variable': '変数',
@@ -131,7 +131,7 @@ replace_words_in_tex(input_path, output_dir, replacements)
 
 #reg_ts_1
 #input_path = '/Users/kawabatahatsu/ibes-japan/ibes-japan/table/reg_ts_1.tex'
-input_path = '/Users/tsenga/ibes-japan/ibes-japan/table/reg_ts_1.tex'
+input_path = '/Users/tsenga/ibes-japan/table/reg_ts_1.tex'
 output_dir = mypath
 replacements = {
     'EPU': '政策不確実性指数',
@@ -153,7 +153,7 @@ replace_words_in_tex(input_path, output_dir, replacements)
 
 #reg_ts_2
 #input_path = '/Users/kawabatahatsu/ibes-japan/ibes-japan/table/reg_ts_2.tex'
-input_path = '/Users/tsenga/ibes-japan/ibes-japan/table/reg_ts_2.tex'
+input_path = '/Users/tsenga/ibes-japan/table/reg_ts_2.tex'
 output_dir = mypath
 replacements = {
     'Forecast dispersion': '予測分散',

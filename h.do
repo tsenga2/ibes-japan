@@ -4,7 +4,7 @@ set more off
 set graphics off
 
 global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan"
-*global mypath "/Users/tsenga/ibes-japan/ibes-japan"
+*global mypath "/Users/tsenga/ibes-japan"
 
  use $mypath/IBES/international/ibes-summary-international.dta, clear
 

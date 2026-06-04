@@ -4,7 +4,7 @@ set graph on
 set maxvar 10000
 
 global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan/IBES/Both"
-global mypath "/Users/tsenga/ibes-japan/ibes-japan/IBES/Both"
+global mypath "/Users/tsenga/ibes-japan/IBES/Both"
 use $mypath/det_history.dta, clear
 
 

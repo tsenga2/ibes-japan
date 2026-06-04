@@ -1,5 +1,5 @@
 global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan/IBES/Both"
-*global mypath "/Users/tsenga/ibes-japan/ibes-japan/IBES/Both"
+*global mypath "/Users/tsenga/ibes-japan/IBES/Both"
 use "$mypath/merged_data.dta", clear
 
 keep if TICKER == "@XJ9"

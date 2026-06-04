@@ -3,7 +3,7 @@ clear all
 set graph off
 
 global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan"
-*global mypath "/Users/tsenga/ibes-japan/ibes-japan"
+*global mypath "/Users/tsenga/ibes-japan"
 use $mypath/IBES/international/ibes-summary-international.dta, clear
 
 capture mkdir $mypath/graph 
@@ -134,7 +134,7 @@ keep NIKKEI225 JPNPRMNTO01GYSAM JPNPROMANMISMEI JPNPRMNTO01GPSAM JPNPRMNTO01IXOB
 save "$mypath/japan-tseries.dta", replace
 
 
-import delimited "/Users/tsenga/ibes-japan/ibes-japan/japan_political_uncertainty_data.csv", varnames(2) clear 
+import delimited "/Users/tsenga/ibes-japan/japan_political_uncertainty_data.csv", varnames(2) clear 
 gen sym = ym(year, month)
 format sym %tm
 drop year

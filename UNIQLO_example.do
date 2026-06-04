@@ -2,7 +2,7 @@
 ******************************************************************  example
 
 global mypath "/Users/kawabatahatsu/ibes-japan/ibes-japan"
-global mypath "/Users/tsenga/ibes-japan/ibes-japan"
+global mypath "/Users/tsenga/ibes-japan"
 use $mypath/merged.dta, clear
 
 capture mkdir $mypath/graph 
